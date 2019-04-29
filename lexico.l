@@ -35,6 +35,19 @@ cad ["][^"]*["]
 <COM1>\n                BEGIN(0);
 <COM1>.           	;
 
+scene					strcpy(yylval.cadena, yytext); return SCENE;
+
+if					strcpy(yylval.cadena, yytext); return IF;
+else					strcpy(yylval.cadena, yytext); return ELSE;
+then 					strcpy(yylval.cadena, yytext); return THEN;
+repeat					strcpy(yylval.cadena, yytext); return REPEAT;
+
+pause					strcpy(yylval.cadena, yytext); return PAUSE;
+start					strcpy(yylval.cadena, yytext); return START;
+
+ON					strcpy(yylval.cadena, yytext); return ON;
+OFF					strcpy(yylval.cadena, yytext); return OFF;
+
 temperature				strcpy(yylval.cadena, yytext); return TEMP;
 light					strcpy(yylval.cadena, yytext); return LIGHT;
 smoke					strcpy(yylval.cadena, yytext); return SMOKE;
@@ -42,13 +55,15 @@ smoke					strcpy(yylval.cadena, yytext); return SMOKE;
 alarm					strcpy(yylval.cadena, yytext); return ALARM;
 switch					strcpy(yylval.cadena, yytext); return SWITCH;
 message					strcpy(yylval.cadena, yytext); return MSG;
-
+']'';'	
 float					strcpy(yylval.cadena, yytext); return FLOAT;
 int					strcpy(yylval.cadena, yytext); return INT;
 string					strcpy(yylval.cadena, yytext); return STRING;
 position				strcpy(yylval.cadena, yytext); return POS;
 
 [%][%]					strcpy(yylval.cadena, yytext); return SEPARADOR;
+
+[]][;]					strcpy(yylval.cadena, yytext); return CIERRE;
 
 true					yylval.bolean = true; return TRUE;
 false					yylval.bolean = false; return FALSE;

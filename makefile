@@ -23,9 +23,3 @@ lex.yy.c: lexico.l	#obtenemos el analizador léxico en C
 clean : 
 	rm  -f  *.c *.o 
 
-flex lexico.l
-bison -d -oexpresiones.c expresiones.y
-g++ -c -olexico.o  lex.yy.c 
-g++ -c -oexpresiones.o  expresiones.c 
-g++ -oexpresiones expresiones.o lexico.o 
-

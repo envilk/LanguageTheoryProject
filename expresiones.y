@@ -15,7 +15,7 @@ bool moduloReal = false;
 
 //definición de procedimientos auxiliares
 void yyerror(const char* s){         /*    llamada por cada error sintactico de yacc */
-	cout << "Error sintáctico en la línea "<< n_lineas<<endl;	
+	cout << "Error sintáctico en la línea "<< n_lineas <<endl;	
 } 
 
 %}
@@ -29,20 +29,25 @@ void yyerror(const char* s){         /*    llamada por cada error sintactico de 
 
 %start programa
 
+%token <cadena> SCENE
+
+%token <cadena> IF ELSE THEN REPEAT
+%token <cadena> PAUSE START
+%token <cadena> ON OFF
+
 %token <cadena> TEMP LIGHT SMOKE
 %token <cadena> ALARM SWITCH MSG
 %token <cadena> FLOAT INT STRING POS
 
-%token <bolean> TRUE FALSE
+%token <bolean> TRUE FALSE 
 %token OR AND EQUAL NOTEQUAL GREATEREQUAL MINOREQUAL
 
-%type <cadena> variable asignacion sensor actuador
+%token <cadena> ID CADENA 
+%token <cadena> SEPARADOR CIERRE
 
-%token <cadena> ID CADENA
-%token <cadena> escenario SEPARADOR
 %token <real> REAL NUMERO
 %type <real> expr
-//%type <bolean> exprLog
+%type <bolean> exprLog
 
 %left OR
 %left AND
@@ -57,7 +62,7 @@ void yyerror(const char* s){         /*    llamada por cada error sintactico de 
 
 %%
 
-programa: zona1 SEPARADOR 
+programa: zona1 SEPARADOR zona2
 	;
 
 
@@ -65,50 +70,85 @@ zona1: instruccion
 	|zona1 instruccion
 	;
 
+zona2: escenario
+	|zona2 escenario
+	;
+
+escenario: SCENE ID '[' accion CIERRE		{cout<<"-- scene "<<$2}
+	;
+
+bucle: REPEAT NUMERO '[' accion CIERRE 		{cout<<"-- repeat "<<$2<<" times"}
+ 	;
+
+cond: IF exprLog THEN '[' accion CIERRE		{cout<<"-- if condicion then"}
+	| IF exprLog THEN '[' accion ELSE accion CIERRE {cout<<"-- if condicion else then"}
+	;
+
+accion:	instruccion
+	| bucle
+	| cond
+	| accion instruccion
+	| accion bucle 
+	| accion cond 
+	;
+
 instruccion:expr ';'		{floatNumber=false; moduloReal = false;}
-	//|exprLog ';'		
 	|asignacion ';'		{floatNumber = false; moduloReal = false;}
 	|variable ';'
 	|sensor ';'
 	|actuador ';'
+	|time ';'
 	|error 			{yyerrok;}  
 	;
 
-variable: INT ID		{cout <<$1<<" "<<$2<<";"<<endl;}
-	| FLOAT ID		{cout <<$1<<" "<<$2<<";"<<endl;}
-	| STRING ID		{cout <<$1<<" "<<$2<<";"<<endl;}
-	| POS ID		{cout <<$1<<" "<<$2<<";"<<endl;}
-	| variable ',' ID	{cout<<$1<<","<<$3;}
-	|error 			{yyerrok;}  
+time: PAUSE NUMERO		{cout<<$1<<" "<<$2<<"; ";}
+	| PAUSE 		{cout<<$1<<"; ";}
+	| START 		{cout<<$1<<"; ";}
 	;
 
-asignacion: ID '=' expr		{cout <<$1<<" = "<<$3<<";"<<endl;}
-	| ID'=''<'expr','expr'>'{cout <<$1<<" = <"<<$4<<","<<$6<<">"<<";"<<endl;}
-	| ID '=' CADENA 	{cout <<$1<<" = "<<$3<<";"<<endl;}
+variable: INT ID		{cout <<$1<<" "<<$2<<"; ";}
+	| FLOAT ID		{cout <<$1<<" "<<$2<<"; ";}
+	| STRING ID		{cout <<$1<<" "<<$2<<"; ";}
+	| POS ID		{cout <<$1<<" "<<$2<<"; ";}
+	| variable ',' ID	{cout<<","<<$3<<" ";}
+	| error 		{yyerrok;}  
 	;
 
-sensor: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<";"<<endl;}
-	| TEMP ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<";"<<endl;}
-	| LIGHT ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<";"<<endl;}
-	| LIGHT ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<";"<<endl;}
-	| LIGHT ID				{cout <<$1<<" "<<$2<<";"<<endl;}
-	| SMOKE ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<";"<<endl;}
-	| SMOKE ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<";"<<endl;}
-	| SMOKE ID				{cout <<$1<<" "<<$2<<";"<<endl;}
+asignacion: ID '=' expr		{cout <<$1<<" = "<<$3<<"; ";}
+	| ID'=''<'expr','expr'>'{cout <<$1<<" = <"<<$4<<","<<$6<<">"<<"; ";}
+	| ID '=' CADENA 	{cout <<$1<<" = "<<$3<<"; ";}
 	;
 
-actuador: ALARM ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<";"<<endl;}
-	| ALARM ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<";"<<endl;}
-	| ALARM ID				{cout <<$1<<" "<<$2<<";"<<endl;}
-	| SWITCH ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<";"<<endl;}
-	| SWITCH ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<";"<<endl;}
-	| SWITCH ID				{cout <<$1<<" "<<$2<<";"<<endl;}
-	| MSG ID				{cout <<$1<<" "<<$2<<";"<<endl;}
+sensor: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
+	| TEMP ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
+	| LIGHT ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
+	| LIGHT ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
+	| LIGHT ID				{cout <<$1<<" "<<$2<<"; ";}
+	| SMOKE ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
+	| SMOKE ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
+	| SMOKE ID				{cout <<$1<<" "<<$2<<"; ";}
+	//
+	| ID REAL				{cout <<$1<<" "<<$2<<"; ";}
+	| ID NUMERO				{cout <<$1<<" "<<$2<<"; ";}
 	;
 
-expr:    NUMERO	 		{$$=$1;}   
+actuador: ALARM ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
+	| ALARM ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
+	| ALARM ID				{cout <<$1<<" "<<$2<<"; ";}
+	| SWITCH ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
+	| SWITCH ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
+	| SWITCH ID				{cout <<$1<<" "<<$2<<"; ";}
+	| MSG ID				{cout <<$1<<" "<<$2<<"; ";}
+	//
+	| ID ON 				{cout <<$1<<" "<<$2<<"; ";}
+	| ID OFF				{cout <<$1<<" "<<$2<<"; ";}
+	| ID ON CADENA				{cout <<$1<<" "<<$2<<" "<<$3<<"; ";}
+	| ID ON ID				{cout <<$1<<" "<<$2<<" "<<$3<<"; ";}
+	;
+
+expr:    NUMERO	 		{$$=$1;}
         | REAL			{$$=$1; floatNumber = true;} 	
-	| ID			{$$=0.0;}
+	| ID			{$$=0.0;}//PARA PROBAR
         | expr '+' expr 	{$$=$1+$3;}       	       
         | expr '-' expr    	{$$=$1-$3;}             
         | expr '*' expr         {$$=$1*$3;}
@@ -119,9 +159,10 @@ expr:    NUMERO	 		{$$=$1;}
         |'(' expr ')' 		{$$=$2;} 	
         ;
 
-/*
+
 exprLog: TRUE			{$$=$1;}
 	|FALSE			{$$=$1;}
+	|ID			{$$=false;}//PARA PROBAR
 	| exprLog EQUAL exprLog	{$$=$1==$3;}
 	| exprLog NOTEQUAL exprLog{$$=$1!=$3;}
 	| exprLog OR exprLog	{$$=$1||$3;}
@@ -135,12 +176,12 @@ exprLog: TRUE			{$$=$1;}
 	| expr '>' expr		{$$=$1>$3;}
 	| expr GREATEREQUAL expr{$$=$1>=$3;}
 	;
-*/
+
 %%
 
 int main( int argc, char *argv[] ){     
 	if (argc != 2) 
-		cout <<"error en los argumentos"<<endl;
+		cout <<"error en los argumentos" <<endl;
 	else {
      		yyin=fopen(argv[1],"rt");
      		n_lineas = 0;
