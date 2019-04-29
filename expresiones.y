@@ -45,7 +45,8 @@ void yyerror(const char* s){         /*    llamada por cada error sintactico de 
 %token <cadena> ID CADENA 
 %token <cadena> SEPARADOR CIERRE
 
-%token <real> REAL NUMERO
+%token <numero> NUMERO
+%token <real> REAL
 %type <real> expr
 %type <bolean> exprLog
 
@@ -92,13 +93,12 @@ accion:	instruccion
 	| accion cond 
 	;
 
-instruccion:expr ';'		{floatNumber=false; moduloReal = false;}
-	|asignacion ';'		{floatNumber = false; moduloReal = false;}
+instruccion: asignacion ';'		{floatNumber = false; moduloReal = false;}
 	|variable ';'
 	|sensor ';'
 	|actuador ';'
 	|time ';'
-	|error 			{yyerrok;}  
+	|error ';'			{yyerrok;}  
 	;
 
 time: PAUSE NUMERO		{cout<<$1<<" "<<$2<<"; ";}

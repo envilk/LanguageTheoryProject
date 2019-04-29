@@ -2,7 +2,7 @@
 
 OBJ = expresiones.o lexico.o 
 
-execute:
+execute: expresiones
 	./expresiones ejemplo1.dsp
 
 expresiones : $(OBJ)     #segunda fase de la tradicción. Generación del código ejecutable 
