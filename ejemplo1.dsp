@@ -2,7 +2,7 @@
 #el programa es correcto
 #Primera parte, zona de definiciones 
 #Variables
-int  		f,c,f;
+int  		f,c;
 float  		winterTemp,summerTemp;
 position	p_Sensor;   string    	msg;
 

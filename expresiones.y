@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <string.h>
 #include "semantico.h"
 
 using namespace std;
@@ -15,6 +16,7 @@ bool floatNumber = false;
 bool moduloReal = false;
 tipo_tabla tabla;
 tipo_datoTS id;
+tipo_valor valor;
 
 //Indica el tipo al definir varias variables con el mismo tipo;
 int tipo;
@@ -131,9 +133,41 @@ variable: INT ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 0, false
 	| error 		{yyerrok;}  
 	;
 
-asignacion: ID '=' expr		{cout <<$1<<" = "<<$3<<"; ";}
-	| ID'=''<'expr','expr'>'{cout <<$1<<" = <"<<$4<<","<<$6<<">"<<"; ";}
-	| ID '=' CADENA 	{cout <<$1<<" = "<<$3<<"; ";}
+asignacion: ID '=' expr		{cout <<$1<<" = "<<$3<<"; "; 	
+				if(buscar(tabla, $1, id))
+				{
+				 if(floatNumber){tipo=1; id.valor.valor_real = $3;} 
+				 else{tipo=0; id.valor.valor_entero = $3;}
+				 strcpy(id.nombre, $1);
+				 id.tipo = tipo;
+				 insertar (tabla, id);
+				}
+				else
+				 cout<<"ERROR SEMANTICO"<<endl;
+				mostrar(tabla);}//TODO que hago si es de diferente tipo
+	| ID '=' CADENA 	{cout <<$1<<" = "<<$3<<"; "; 
+				if(buscar(tabla, $1, id))
+				{
+				 strcpy(id.valor.valor_cad, $3);
+				 strcpy(id.nombre, $1);
+				 id.tipo = 2;
+				 insertar (tabla, id);
+				}
+				else
+				 cout<<"ERROR SEMANTICO"<<endl;
+				mostrar(tabla);}
+	| ID'=''<'expr','expr'>'{cout <<$1<<" = <"<<$4<<","<<$6<<">"<<"; "; 
+				if(buscar(tabla, $1, id))
+				{
+				 id.valor.valor_pos[0] = $4;
+				 id.valor.valor_pos[1] = $6;
+				 strcpy(id.nombre, $1);
+				 id.tipo = 3;
+				 insertar (tabla, id);
+				}
+				else
+				 cout<<"ERROR SEMANTICO"<<endl;
+				mostrar(tabla);}
 	;
 
 sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
@@ -167,7 +201,15 @@ actuadorInstr: ID ON 				{cout <<$1<<" "<<$2<<"; ";}
 
 expr:    NUMERO	 		{$$=$1;}
         | REAL			{$$=$1; floatNumber = true;} 	
-	| ID			{$$=0.0;}//PARA PROBAR
+	| ID			{if(buscar(tabla, $1, id)) 
+				 {
+				  if(id.tipo == 0)
+				   $$ = id.valor.valor_entero; 	
+				  else if(id.tipo == 1)
+				   $$ = id.valor.valor_real;
+				 }
+				 else 
+ 				  cout<<"ERROR SEMANTICO"<<endl;}
         | expr '+' expr 	{$$=$1+$3;}       	       
         | expr '-' expr    	{$$=$1-$3;}             
         | expr '*' expr         {$$=$1*$3;}

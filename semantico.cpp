@@ -4,6 +4,10 @@
 #include "semantico.h"
 using namespace std;
 
+
+
+
+
 void insertar (tipo_tabla &TS, tipo_datoTS identificador)
 {
  bool encontrado = false;
@@ -42,12 +46,16 @@ void insertar (tipo_tabla &TS, tipo_datoTS identificador)
  }
 }
 
+
+
+
+
 bool buscar (tipo_tabla TS, tipo_cadena nombre, tipo_datoTS &identificador)
 {
  bool encontrado = false;
  for(int i=0;i<TS.max && !encontrado;i++)
  {
-  if(TS.tabla[i].nombre == nombre)
+  if(strcmp(TS.tabla[i].nombre, nombre) == 0)
   {
    encontrado = true;
    identificador = TS.tabla[i];
@@ -55,6 +63,10 @@ bool buscar (tipo_tabla TS, tipo_cadena nombre, tipo_datoTS &identificador)
  }
  return encontrado;
 }
+
+
+
+
 
 void mostrar(tipo_tabla TS)
 {
@@ -72,6 +84,10 @@ void mostrar(tipo_tabla TS)
  }
  cout<<endl;
 }
+ 
+
+
+
 
 void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool end, tipo_tabla &TS)
 {
@@ -95,6 +111,8 @@ void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool 
   vars.max = 0;
  }
 }
+
+
 
 /*
 int main()
