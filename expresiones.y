@@ -125,7 +125,7 @@ time: PAUSE NUMERO		{cout<<$1<<" "<<$2<<"; ";}
 variable: INT ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 0, false, tabla); tipo=0;}//end = true
 	| FLOAT ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 1, false, tabla); tipo=1;}//end = true
 	| STRING ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 2, false, tabla); tipo=2;}//end = true
-	| POS ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 4/*para que no de error al asignar a var booleana*/, false, tabla); tipo=3;}//end = true
+	| POS ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 3, false, tabla); tipo=3;}//end = true
 	| variable ',' ID	{cout<<","<<$3; insertarVariables(variables, $3, tipo, false, tabla);}//end = false
 	| ';'			{cout<<";"<<endl; insertarVariables(variables, "", tipo, true, tabla); mostrar(tabla);}
 	| error 		{yyerrok;}  

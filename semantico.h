@@ -12,7 +12,7 @@ union tipo_valor{
  int valor_entero;	//TIPO 0
  float valor_real;	//TIPO 1
  tipo_cadena valor_cad; //TIPO 2
- bool valor_bol;	//TIPO 3
+ int valor_pos[2];	//TIPO 3
 };
 
 struct tipo_datoTS{

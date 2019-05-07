@@ -10,7 +10,7 @@ void insertar (tipo_tabla &TS, tipo_datoTS identificador)
  int pos;
  for(int i=0;i<TS.max && !encontrado;i++)
  {
-  if(TS.tabla[i].nombre == identificador.nombre)
+  if(strcmp(TS.tabla[i].nombre, identificador.nombre) == 0)
   {
    encontrado = true;
    pos = i;
@@ -32,7 +32,10 @@ void insertar (tipo_tabla &TS, tipo_datoTS identificador)
    if(identificador.tipo == 2)
     strcpy(TS.tabla[pos].valor.valor_cad, identificador.valor.valor_cad);
    if(identificador.tipo == 3)
-    TS.tabla[pos].valor.valor_bol = identificador.valor.valor_bol;
+   {
+    TS.tabla[pos].valor.valor_pos[0] = identificador.valor.valor_pos[0];
+    TS.tabla[pos].valor.valor_pos[1] = identificador.valor.valor_pos[1];
+   }
   }
   else
    printf("ERROR DE TIPO");
@@ -65,7 +68,7 @@ void mostrar(tipo_tabla TS)
   if(TS.tabla[i].tipo == 2)
    cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_cad<<"]"<<endl;
   if(TS.tabla[i].tipo == 3)
-   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_bol<<"]"<<endl;
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_pos[0]<<","<<TS.tabla[i].valor.valor_pos[1]<<"]"<<endl;
  }
  cout<<endl;
 }
