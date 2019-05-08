@@ -39,7 +39,14 @@ void insertar (tipo_tabla &TS, tipo_datoTS identificador)
    {
     TS.tabla[pos].valor.valor_pos[0] = identificador.valor.valor_pos[0];
     TS.tabla[pos].valor.valor_pos[1] = identificador.valor.valor_pos[1];
-   }
+   }/*
+   if(identificador.tipo == 10)
+   if(identificador.tipo == 11)
+   if(identificador.tipo == 12)
+   if(identificador.tipo == 20)
+   if(identificador.tipo == 21)
+   if(identificador.tipo == 22)
+// if(identificador.tipo == 30)*/
   }
   else
    printf("ERROR DE TIPO");
@@ -74,13 +81,55 @@ void mostrar(tipo_tabla TS)
  for(int i=0;i<TS.max;i++)
  {
   if(TS.tabla[i].tipo == 0)
-   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_entero<<"]"<<endl;
+  {
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_entero;
+   cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
+  }
   if(TS.tabla[i].tipo == 1)
-   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_real<<"]"<<endl;
+  {
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_real;
+   cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
+  }
   if(TS.tabla[i].tipo == 2)
-   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_cad<<"]"<<endl;
+  {
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_cad;
+   cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
+  }
   if(TS.tabla[i].tipo == 3)
-   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_pos[0]<<","<<TS.tabla[i].valor.valor_pos[1]<<"]"<<endl;
+  {
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_pos[0]<<","<<TS.tabla[i].valor.valor_pos[1];
+   cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
+  }
+  if(TS.tabla[i].tipo == 10)
+  {
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_cad;
+   cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
+  }
+  if(TS.tabla[i].tipo == 11)
+  {
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_cad;
+   cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
+  }
+  if(TS.tabla[i].tipo == 12)
+  {
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_cad;
+   cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
+  }
+  if(TS.tabla[i].tipo == 20)
+  {
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_cad;
+   cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
+  }
+  if(TS.tabla[i].tipo == 21)
+  {
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_cad;
+   cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
+  }
+  if(TS.tabla[i].tipo == 22)
+  {
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_cad;
+   cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
+  }
  }
  cout<<endl;
 }

@@ -123,12 +123,11 @@ time: PAUSE NUMERO		{cout<<$1<<" "<<$2<<"; ";}
 	| START 		{cout<<$1<<"; ";}
 	;
 		
-//TODO TIPO POS ES VECTOR DE 2 AÑADIR A LA TABLA | ¿HABRIA QUE QUITAR TIPOS BOOLEANOS DE LA TABLA?
-variable: INT ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 0, false, tabla); tipo=0;}//end = true
-	| FLOAT ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 1, false, tabla); tipo=1;}//end = true
-	| STRING ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 2, false, tabla); tipo=2;}//end = true
-	| POS ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 3, false, tabla); tipo=3;}//end = true
-	| variable ',' ID	{cout<<","<<$3; insertarVariables(variables, $3, tipo, false, tabla);}//end = false
+variable: INT ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 0, false, tabla); tipo=0;}
+	| FLOAT ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 1, false, tabla); tipo=1;}
+	| STRING ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 2, false, tabla); tipo=2;}
+	| POS ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 3, false, tabla); tipo=3;}
+	| variable ',' ID	{cout<<","<<$3; insertarVariables(variables, $3, tipo, false, tabla);}
 	| ';'			{cout<<";"<<endl; insertarVariables(variables, "", tipo, true, tabla); mostrar(tabla);}
 	| error 		{yyerrok;}  
 	;
@@ -144,7 +143,7 @@ asignacion: ID '=' expr		{cout <<$1<<" = "<<$3<<"; ";
 				}
 				else
 				 cout<<"ERROR SEMANTICO"<<endl;
-				mostrar(tabla);}//TODO que hago si es de diferente tipo
+				mostrar(tabla);}
 	| ID '=' CADENA 	{cout <<$1<<" = "<<$3<<"; "; 
 				if(buscar(tabla, $1, id))
 				{
@@ -170,27 +169,58 @@ asignacion: ID '=' expr		{cout <<$1<<" = "<<$3<<"; ";
 				mostrar(tabla);}
 	;
 
-sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
+sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" <"<<$4<<","<<$6<<"> "<<$8<<"; "; 
+						strcpy(id.nombre, $2);
+						id.tipo = 10;
+						id.pos[0] = $4;
+						id.pos[1] = $6;
+						strcpy(id.alias, $8);
+						insertar (tabla, id); 
+						mostrar(tabla);}
 	| TEMP ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
-	| LIGHT ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
+	| LIGHT ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" <"<<$4<<","<<$6<<"> "<<$8<<"; ";
+						strcpy(id.nombre, $2);
+						id.tipo = 11;
+						id.pos[0] = $4;
+						id.pos[1] = $6;
+						strcpy(id.alias, $8);
+						insertar (tabla, id); 
+						mostrar(tabla);}
 	| LIGHT ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
-	| LIGHT ID				{cout <<$1<<" "<<$2<<"; ";}
-	| SMOKE ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
+	| SMOKE ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" <"<<$4<<","<<$6<<"> "<<$8<<"; ";
+						strcpy(id.nombre, $2);
+						id.tipo = 12;
+						id.pos[0] = $4;
+						id.pos[1] = $6;
+						strcpy(id.alias, $8);
+						insertar (tabla, id); 
+						mostrar(tabla);}
 	| SMOKE ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
-	| SMOKE ID				{cout <<$1<<" "<<$2<<"; ";}
 	;
 
 sensorInstr: ID REAL				{cout <<$1<<" "<<$2<<"; ";}
 	| ID NUMERO				{cout <<$1<<" "<<$2<<"; ";}
 	;
 
-actuadorDef: ALARM ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
-	| ALARM ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
-	| ALARM ID				{cout <<$1<<" "<<$2<<"; ";}
-	| SWITCH ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" = <"<<$4<<","<<$6<<"> "<<$8<<"; ";}
+actuadorDef: ALARM ID				{cout <<$1<<" "<<$2<<"; ";
+						strcpy(id.nombre, $2);
+						id.tipo = 20;
+						insertar (tabla, id); 
+						mostrar(tabla);}
+	| SWITCH ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" <"<<$4<<","<<$6<<"> "<<$8<<"; ";
+						strcpy(id.nombre, $2);
+						id.tipo = 21;
+						id.pos[0] = $4;
+						id.pos[1] = $6;
+						strcpy(id.alias, $8);
+						insertar (tabla, id); 
+						mostrar(tabla);}
 	| SWITCH ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
-	| SWITCH ID				{cout <<$1<<" "<<$2<<"; ";}
-	| MSG ID				{cout <<$1<<" "<<$2<<"; ";}
+	| MSG ID				{cout <<$1<<" "<<$2<<"; ";
+						strcpy(id.nombre, $2);
+						id.tipo = 22;
+						insertar (tabla, id); 
+						mostrar(tabla);}
 	;
 
 actuadorInstr: ID ON 				{cout <<$1<<" "<<$2<<"; ";}

@@ -13,12 +13,14 @@ union tipo_valor{
  float valor_real;	//TIPO 1
  tipo_cadena valor_cad; //TIPO 2
  int valor_pos[2];	//TIPO 3
-};
+ };
 
 struct tipo_datoTS{
  tipo_cadena nombre;
  int tipo;
  tipo_valor valor;
+ int pos[2];
+ tipo_cadena alias;
 };
 
 struct tipo_tabla{
