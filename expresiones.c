@@ -544,11 +544,11 @@ static const yytype_uint16 yyrline[] =
       97,   100,   101,   102,   103,   104,   105,   108,   109,   110,
      111,   112,   115,   116,   117,   118,   121,   122,   123,   126,
      127,   128,   129,   130,   131,   132,   135,   147,   158,   172,
-     180,   181,   189,   190,   198,   201,   202,   205,   210,   218,
-     219,   226,   227,   228,   229,   232,   233,   234,   243,   244,
-     245,   246,   247,   248,   249,   250,   254,   255,   256,   257,
-     258,   259,   260,   261,   262,   263,   264,   265,   266,   267,
-     268
+     180,   194,   202,   216,   224,   240,   241,   244,   249,   257,
+     271,   278,   279,   280,   281,   284,   285,   286,   295,   296,
+     297,   298,   299,   300,   301,   302,   306,   307,   308,   309,
+     310,   311,   312,   313,   314,   315,   316,   317,   318,   319,
+     320
 };
 #endif
 
@@ -1744,11 +1744,24 @@ yyreduce:
 
   case 40:
 #line 180 "expresiones.y"
-    {cout <<(yyvsp[(1) - (4)].cadena)<<" "<<(yyvsp[(2) - (4)].cadena)<<" "<<(yyvsp[(3) - (4)].cadena)<<" "<<(yyvsp[(4) - (4)].cadena)<<"; ";;}
+    {cout <<(yyvsp[(1) - (4)].cadena)<<" "<<(yyvsp[(2) - (4)].cadena)<<" "<<(yyvsp[(3) - (4)].cadena)<<" "<<(yyvsp[(4) - (4)].cadena)<<"; ";
+						if(buscar(tabla, (yyvsp[(3) - (4)].cadena), id))
+						{
+						 strcpy(id.nombre, (yyvsp[(2) - (4)].cadena));
+						 id.tipo = 10;
+						 id.pos[0] = id.valor.valor_pos[0];
+						 id.pos[1] = id.valor.valor_pos[1];
+						 strcpy(id.alias, (yyvsp[(4) - (4)].cadena));
+						 insertar(tabla, id);
+						 mostrar(tabla);
+						}
+						else
+						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
+						;}
     break;
 
   case 41:
-#line 181 "expresiones.y"
+#line 194 "expresiones.y"
     {cout <<(yyvsp[(1) - (8)].cadena)<<" "<<(yyvsp[(2) - (8)].cadena)<<" <"<<(yyvsp[(4) - (8)].real)<<","<<(yyvsp[(6) - (8)].real)<<"> "<<(yyvsp[(8) - (8)].cadena)<<"; ";
 						strcpy(id.nombre, (yyvsp[(2) - (8)].cadena));
 						id.tipo = 11;
@@ -1760,12 +1773,25 @@ yyreduce:
     break;
 
   case 42:
-#line 189 "expresiones.y"
-    {cout <<(yyvsp[(1) - (4)].cadena)<<" "<<(yyvsp[(2) - (4)].cadena)<<" "<<(yyvsp[(3) - (4)].cadena)<<" "<<(yyvsp[(4) - (4)].cadena)<<"; ";;}
+#line 202 "expresiones.y"
+    {cout <<(yyvsp[(1) - (4)].cadena)<<" "<<(yyvsp[(2) - (4)].cadena)<<" "<<(yyvsp[(3) - (4)].cadena)<<" "<<(yyvsp[(4) - (4)].cadena)<<"; ";
+						if(buscar(tabla, (yyvsp[(3) - (4)].cadena), id))
+						{
+						 strcpy(id.nombre, (yyvsp[(2) - (4)].cadena));
+						 id.tipo = 11;
+						 id.pos[0] = id.valor.valor_pos[0];
+						 id.pos[1] = id.valor.valor_pos[1];
+						 strcpy(id.alias, (yyvsp[(4) - (4)].cadena));
+						 insertar(tabla, id);
+						 mostrar(tabla);
+						}
+						else
+						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
+						;}
     break;
 
   case 43:
-#line 190 "expresiones.y"
+#line 216 "expresiones.y"
     {cout <<(yyvsp[(1) - (8)].cadena)<<" "<<(yyvsp[(2) - (8)].cadena)<<" <"<<(yyvsp[(4) - (8)].real)<<","<<(yyvsp[(6) - (8)].real)<<"> "<<(yyvsp[(8) - (8)].cadena)<<"; ";
 						strcpy(id.nombre, (yyvsp[(2) - (8)].cadena));
 						id.tipo = 12;
@@ -1777,22 +1803,35 @@ yyreduce:
     break;
 
   case 44:
-#line 198 "expresiones.y"
-    {cout <<(yyvsp[(1) - (4)].cadena)<<" "<<(yyvsp[(2) - (4)].cadena)<<" "<<(yyvsp[(3) - (4)].cadena)<<" "<<(yyvsp[(4) - (4)].cadena)<<"; ";;}
+#line 224 "expresiones.y"
+    {cout <<(yyvsp[(1) - (4)].cadena)<<" "<<(yyvsp[(2) - (4)].cadena)<<" "<<(yyvsp[(3) - (4)].cadena)<<" "<<(yyvsp[(4) - (4)].cadena)<<"; ";
+						if(buscar(tabla, (yyvsp[(3) - (4)].cadena), id))
+						{
+						 strcpy(id.nombre, (yyvsp[(2) - (4)].cadena));
+						 id.tipo = 12;
+						 id.pos[0] = id.valor.valor_pos[0];
+						 id.pos[1] = id.valor.valor_pos[1];
+						 strcpy(id.alias, (yyvsp[(4) - (4)].cadena));
+						 insertar(tabla, id);
+						 mostrar(tabla);
+						}
+						else
+						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
+						;}
     break;
 
   case 45:
-#line 201 "expresiones.y"
+#line 240 "expresiones.y"
     {cout <<(yyvsp[(1) - (2)].cadena)<<" "<<(yyvsp[(2) - (2)].real)<<"; ";;}
     break;
 
   case 46:
-#line 202 "expresiones.y"
+#line 241 "expresiones.y"
     {cout <<(yyvsp[(1) - (2)].cadena)<<" "<<(yyvsp[(2) - (2)].numero)<<"; ";;}
     break;
 
   case 47:
-#line 205 "expresiones.y"
+#line 244 "expresiones.y"
     {cout <<(yyvsp[(1) - (2)].cadena)<<" "<<(yyvsp[(2) - (2)].cadena)<<"; ";
 						strcpy(id.nombre, (yyvsp[(2) - (2)].cadena));
 						id.tipo = 20;
@@ -1801,7 +1840,7 @@ yyreduce:
     break;
 
   case 48:
-#line 210 "expresiones.y"
+#line 249 "expresiones.y"
     {cout <<(yyvsp[(1) - (8)].cadena)<<" "<<(yyvsp[(2) - (8)].cadena)<<" <"<<(yyvsp[(4) - (8)].real)<<","<<(yyvsp[(6) - (8)].real)<<"> "<<(yyvsp[(8) - (8)].cadena)<<"; ";
 						strcpy(id.nombre, (yyvsp[(2) - (8)].cadena));
 						id.tipo = 21;
@@ -1813,12 +1852,25 @@ yyreduce:
     break;
 
   case 49:
-#line 218 "expresiones.y"
-    {cout <<(yyvsp[(1) - (4)].cadena)<<" "<<(yyvsp[(2) - (4)].cadena)<<" "<<(yyvsp[(3) - (4)].cadena)<<" "<<(yyvsp[(4) - (4)].cadena)<<"; ";;}
+#line 257 "expresiones.y"
+    {cout <<(yyvsp[(1) - (4)].cadena)<<" "<<(yyvsp[(2) - (4)].cadena)<<" "<<(yyvsp[(3) - (4)].cadena)<<" "<<(yyvsp[(4) - (4)].cadena)<<"; ";
+						if(buscar(tabla, (yyvsp[(3) - (4)].cadena), id))
+						{
+						 strcpy(id.nombre, (yyvsp[(2) - (4)].cadena));
+						 id.tipo = 21;
+						 id.pos[0] = id.valor.valor_pos[0];
+						 id.pos[1] = id.valor.valor_pos[1];
+						 strcpy(id.alias, (yyvsp[(4) - (4)].cadena));
+						 insertar(tabla, id);
+						 mostrar(tabla);
+						}
+						else
+						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
+						;}
     break;
 
   case 50:
-#line 219 "expresiones.y"
+#line 271 "expresiones.y"
     {cout <<(yyvsp[(1) - (2)].cadena)<<" "<<(yyvsp[(2) - (2)].cadena)<<"; ";
 						strcpy(id.nombre, (yyvsp[(2) - (2)].cadena));
 						id.tipo = 22;
@@ -1827,37 +1879,37 @@ yyreduce:
     break;
 
   case 51:
-#line 226 "expresiones.y"
+#line 278 "expresiones.y"
     {cout <<(yyvsp[(1) - (2)].cadena)<<" "<<(yyvsp[(2) - (2)].cadena)<<"; ";;}
     break;
 
   case 52:
-#line 227 "expresiones.y"
+#line 279 "expresiones.y"
     {cout <<(yyvsp[(1) - (2)].cadena)<<" "<<(yyvsp[(2) - (2)].cadena)<<"; ";;}
     break;
 
   case 53:
-#line 228 "expresiones.y"
+#line 280 "expresiones.y"
     {cout <<(yyvsp[(1) - (3)].cadena)<<" "<<(yyvsp[(2) - (3)].cadena)<<" "<<(yyvsp[(3) - (3)].cadena)<<"; ";;}
     break;
 
   case 54:
-#line 229 "expresiones.y"
+#line 281 "expresiones.y"
     {cout <<(yyvsp[(1) - (3)].cadena)<<" "<<(yyvsp[(2) - (3)].cadena)<<" "<<(yyvsp[(3) - (3)].cadena)<<"; ";;}
     break;
 
   case 55:
-#line 232 "expresiones.y"
+#line 284 "expresiones.y"
     {(yyval.real)=(yyvsp[(1) - (1)].numero);;}
     break;
 
   case 56:
-#line 233 "expresiones.y"
+#line 285 "expresiones.y"
     {(yyval.real)=(yyvsp[(1) - (1)].real); floatNumber = true;;}
     break;
 
   case 57:
-#line 234 "expresiones.y"
+#line 286 "expresiones.y"
     {if(buscar(tabla, (yyvsp[(1) - (1)].cadena), id)) 
 				 {
 				  if(id.tipo == 0)
@@ -1870,123 +1922,123 @@ yyreduce:
     break;
 
   case 58:
-#line 243 "expresiones.y"
+#line 295 "expresiones.y"
     {(yyval.real)=(yyvsp[(1) - (3)].real)+(yyvsp[(3) - (3)].real);;}
     break;
 
   case 59:
-#line 244 "expresiones.y"
+#line 296 "expresiones.y"
     {(yyval.real)=(yyvsp[(1) - (3)].real)-(yyvsp[(3) - (3)].real);;}
     break;
 
   case 60:
-#line 245 "expresiones.y"
+#line 297 "expresiones.y"
     {(yyval.real)=(yyvsp[(1) - (3)].real)*(yyvsp[(3) - (3)].real);;}
     break;
 
   case 61:
-#line 246 "expresiones.y"
+#line 298 "expresiones.y"
     {if(!floatNumber) (yyval.real)=(int)(yyvsp[(1) - (3)].real)/(int)(yyvsp[(3) - (3)].real); else (yyval.real)=(yyvsp[(1) - (3)].real)/(yyvsp[(3) - (3)].real);;}
     break;
 
   case 62:
-#line 247 "expresiones.y"
+#line 299 "expresiones.y"
     {if(!floatNumber) (yyval.real)=(int)(yyvsp[(1) - (3)].real)%(int)(yyvsp[(3) - (3)].real); else moduloReal = true;;}
     break;
 
   case 63:
-#line 248 "expresiones.y"
+#line 300 "expresiones.y"
     {(yyval.real)=pow((yyvsp[(1) - (3)].real),(yyvsp[(3) - (3)].real));;}
     break;
 
   case 64:
-#line 249 "expresiones.y"
+#line 301 "expresiones.y"
     {(yyval.real)=-(yyvsp[(2) - (2)].real);;}
     break;
 
   case 65:
-#line 250 "expresiones.y"
+#line 302 "expresiones.y"
     {(yyval.real)=(yyvsp[(2) - (3)].real);;}
     break;
 
   case 66:
-#line 254 "expresiones.y"
+#line 306 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (1)].bolean);;}
     break;
 
   case 67:
-#line 255 "expresiones.y"
+#line 307 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (1)].bolean);;}
     break;
 
   case 68:
-#line 256 "expresiones.y"
+#line 308 "expresiones.y"
     {(yyval.bolean)=false;;}
     break;
 
   case 69:
-#line 257 "expresiones.y"
+#line 309 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (3)].bolean)==(yyvsp[(3) - (3)].bolean);;}
     break;
 
   case 70:
-#line 258 "expresiones.y"
+#line 310 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (3)].bolean)!=(yyvsp[(3) - (3)].bolean);;}
     break;
 
   case 71:
-#line 259 "expresiones.y"
+#line 311 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (3)].bolean)||(yyvsp[(3) - (3)].bolean);;}
     break;
 
   case 72:
-#line 260 "expresiones.y"
+#line 312 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (3)].bolean)&&(yyvsp[(3) - (3)].bolean);;}
     break;
 
   case 73:
-#line 261 "expresiones.y"
+#line 313 "expresiones.y"
     {(yyval.bolean)=!(yyvsp[(2) - (2)].bolean);;}
     break;
 
   case 74:
-#line 262 "expresiones.y"
+#line 314 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(2) - (3)].bolean);;}
     break;
 
   case 75:
-#line 263 "expresiones.y"
+#line 315 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (3)].real)==(yyvsp[(3) - (3)].real);;}
     break;
 
   case 76:
-#line 264 "expresiones.y"
+#line 316 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (3)].real)!=(yyvsp[(3) - (3)].real);;}
     break;
 
   case 77:
-#line 265 "expresiones.y"
+#line 317 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (3)].real)<(yyvsp[(3) - (3)].real);;}
     break;
 
   case 78:
-#line 266 "expresiones.y"
+#line 318 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (3)].real)<=(yyvsp[(3) - (3)].real);;}
     break;
 
   case 79:
-#line 267 "expresiones.y"
+#line 319 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (3)].real)>(yyvsp[(3) - (3)].real);;}
     break;
 
   case 80:
-#line 268 "expresiones.y"
+#line 320 "expresiones.y"
     {(yyval.bolean)=(yyvsp[(1) - (3)].real)>=(yyvsp[(3) - (3)].real);;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1990 "expresiones.c"
+#line 2042 "expresiones.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2200,7 +2252,7 @@ yyreturn:
 }
 
 
-#line 271 "expresiones.y"
+#line 323 "expresiones.y"
 
 
 int main( int argc, char *argv[] ){     

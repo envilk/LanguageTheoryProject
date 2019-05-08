@@ -177,7 +177,20 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" <"<<$4<<","<
 						strcpy(id.alias, $8);
 						insertar (tabla, id); 
 						mostrar(tabla);}
-	| TEMP ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
+	| TEMP ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";
+						if(buscar(tabla, $3, id))
+						{
+						 strcpy(id.nombre, $2);
+						 id.tipo = 10;
+						 id.pos[0] = id.valor.valor_pos[0];
+						 id.pos[1] = id.valor.valor_pos[1];
+						 strcpy(id.alias, $4);
+						 insertar(tabla, id);
+						 mostrar(tabla);
+						}
+						else
+						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
+						}
 	| LIGHT ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" <"<<$4<<","<<$6<<"> "<<$8<<"; ";
 						strcpy(id.nombre, $2);
 						id.tipo = 11;
@@ -186,7 +199,20 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" <"<<$4<<","<
 						strcpy(id.alias, $8);
 						insertar (tabla, id); 
 						mostrar(tabla);}
-	| LIGHT ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
+	| LIGHT ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";
+						if(buscar(tabla, $3, id))
+						{
+						 strcpy(id.nombre, $2);
+						 id.tipo = 11;
+						 id.pos[0] = id.valor.valor_pos[0];
+						 id.pos[1] = id.valor.valor_pos[1];
+						 strcpy(id.alias, $4);
+						 insertar(tabla, id);
+						 mostrar(tabla);
+						}
+						else
+						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
+						}
 	| SMOKE ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" <"<<$4<<","<<$6<<"> "<<$8<<"; ";
 						strcpy(id.nombre, $2);
 						id.tipo = 12;
@@ -195,7 +221,20 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" <"<<$4<<","<
 						strcpy(id.alias, $8);
 						insertar (tabla, id); 
 						mostrar(tabla);}
-	| SMOKE ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
+	| SMOKE ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";
+						if(buscar(tabla, $3, id))
+						{
+						 strcpy(id.nombre, $2);
+						 id.tipo = 12;
+						 id.pos[0] = id.valor.valor_pos[0];
+						 id.pos[1] = id.valor.valor_pos[1];
+						 strcpy(id.alias, $4);
+						 insertar(tabla, id);
+						 mostrar(tabla);
+						}
+						else
+						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
+						}
 	;
 
 sensorInstr: ID REAL				{cout <<$1<<" "<<$2<<"; ";}
@@ -215,7 +254,20 @@ actuadorDef: ALARM ID				{cout <<$1<<" "<<$2<<"; ";
 						strcpy(id.alias, $8);
 						insertar (tabla, id); 
 						mostrar(tabla);}
-	| SWITCH ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";}
+	| SWITCH ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";
+						if(buscar(tabla, $3, id))
+						{
+						 strcpy(id.nombre, $2);
+						 id.tipo = 21;
+						 id.pos[0] = id.valor.valor_pos[0];
+						 id.pos[1] = id.valor.valor_pos[1];
+						 strcpy(id.alias, $4);
+						 insertar(tabla, id);
+						 mostrar(tabla);
+						}
+						else
+						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
+						}
 	| MSG ID				{cout <<$1<<" "<<$2<<"; ";
 						strcpy(id.nombre, $2);
 						id.tipo = 22;
