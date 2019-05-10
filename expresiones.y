@@ -12,6 +12,7 @@ using namespace std;
 extern int n_lineas;
 extern int yylex();
 extern FILE* yyin;
+extern FILE* yyout;
 bool floatNumber = false;
 bool moduloReal = false;
 tipo_tabla tabla;
@@ -29,6 +30,21 @@ tipo_variables variables;
 void yyerror(const char* s){         /*    llamada por cada error sintactico de yacc */
 	cout << "Error sintáctico en la línea "<< n_lineas <<endl;	
 } 
+
+void iniciar()
+{
+ for(int i=0;i<tabla.max;i++)
+ {
+  if(tabla.tabla[i].tipo == 10)
+   fprintf(yyout, "entornoPonerSensor(%i,%i,S_temperature,0,%s);\n", tabla.tabla[i].pos[0], tabla.tabla[i].pos[1], tabla.tabla[i].alias);
+  if(tabla.tabla[i].tipo == 11)
+   fprintf(yyout, "entornoPonerSensor(%i,%i,S_temperature,0,%s);\n", tabla.tabla[i].pos[0], tabla.tabla[i].pos[1], tabla.tabla[i].alias);
+  if(tabla.tabla[i].tipo == 12)
+   fprintf(yyout, "entornoPonerSensor(%i,%i,S_temperature,0,%s);\n", tabla.tabla[i].pos[0], tabla.tabla[i].pos[1], tabla.tabla[i].alias);
+  if(tabla.tabla[i].tipo == 21)
+   fprintf(yyout, "entornoPonerAct_Switch(%i,%i,false,%s);\n", tabla.tabla[i].pos[0], tabla.tabla[i].pos[1], tabla.tabla[i].alias);
+ }
+}
 
 %}
 
@@ -87,14 +103,14 @@ zona2: escenario
 	|zona2 escenario
 	;
 
-escenario: SCENE ID '[' accion CIERRE		{cout<<"-- scene "<<$2}
+escenario: SCENE ID '[' accion CIERRE		{cout<<"-- scene "<<$2;}
 	;
 
-bucle: REPEAT NUMERO '[' accion CIERRE 		{cout<<"-- repeat "<<$2<<" times"}
+bucle: REPEAT NUMERO '[' accion CIERRE 		{cout<<"-- repeat "<<$2<<" times";}
  	;
 
-cond: IF exprLog THEN '[' accion CIERRE		{cout<<"-- if condicion then"}
-	| IF exprLog THEN '[' accion ELSE accion CIERRE {cout<<"-- if condicion else then"}
+cond: IF exprLog THEN '[' accion CIERRE		{cout<<"-- if condicion then";}
+	| IF exprLog THEN '[' accion ELSE accion CIERRE {cout<<"-- if condicion else then";}
 	;
 
 accion:	instruccion
@@ -120,7 +136,7 @@ instruccion: sensorInstr ';'
 
 time: PAUSE NUMERO		{cout<<$1<<" "<<$2<<"; ";}
 	| PAUSE 		{cout<<$1<<"; ";}
-	| START 		{cout<<$1<<"; ";}
+	| START 		{cout<<$1<<"; "; iniciar();}
 	;
 		
 variable: INT ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 0, false, tabla); tipo=0;}
@@ -323,12 +339,32 @@ exprLog: TRUE			{$$=$1;}
 %%
 
 int main( int argc, char *argv[] ){     
-	if (argc != 2) 
+	if (argc != 3) 
 		cout <<"error en los argumentos" <<endl;
 	else {
      		yyin=fopen(argv[1],"rt");
+		yyout=fopen(argv[2],"w");
      		n_lineas = 0;
+
+
+		fprintf(yyout, "#include <iostream>\n");
+		fprintf(yyout, "#include ''entorno_dspl.h''\n");
+		fprintf(yyout, "using namespace std;\n");
+
+		fprintf(yyout, "void inicio (){\n");
+		//fprintf(yyout, 		"entornoPonerSensor(25,25,S_temperature,0,''T1'');");
+		//fprintf(yyout, 		"entornoPonerSensor(250,250,S_smoke,0,''SH'');");
+		//	entornoPonerAct_Switch(150,550,false,"CA");");
+		fprintf(yyout, "}\n");
+		fprintf(yyout, "int main() {\n");
+
        		yyparse();
+
+		fprintf(yyout, "return 0;\n");
+		fprintf(yyout, "\t}\n");
+
+		fclose(yyin);
+		fclose(yyout);
          	return 0;
 	}
 }
