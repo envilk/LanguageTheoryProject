@@ -91,26 +91,26 @@ void iniciar()
 
 %%
 
-programa: zona1 SEPARADOR zona2
+programa: zona1 SEPARADOR zona2 {fprintf(yyout, "entornoBorrarMensaje();\n"); fprintf(yyout, "entornoTerminar()\n");}
 	;
 
 
-zona1: definicion
+zona1: definicion 
 	|zona1 definicion
 	;
 
-zona2: escenario
+zona2: escenario 
 	|zona2 escenario
 	;
 
-escenario: SCENE ID '[' accion CIERRE		{cout<<"-- scene "<<$2;}
+escenario: SCENE ID '[' {fprintf(yyout, "entornoPonerEscenario(\"%s\")\n", $2);} accion CIERRE
 	;
 
-bucle: REPEAT NUMERO '[' accion CIERRE 		{cout<<"-- repeat "<<$2<<" times";}
+bucle: REPEAT NUMERO '[' accion CIERRE 	
  	;
 
-cond: IF exprLog THEN '[' accion CIERRE		{cout<<"-- if condicion then";}
-	| IF exprLog THEN '[' accion ELSE accion CIERRE {cout<<"-- if condicion else then";}
+cond: IF exprLog THEN '[' accion CIERRE		
+	| IF exprLog THEN '[' accion ELSE accion CIERRE 
 	;
 
 accion:	instruccion
@@ -134,67 +134,52 @@ instruccion: sensorInstr ';'
 	|error ';'			{yyerrok;}  
 	;
 
-time: PAUSE NUMERO		{cout<<$1<<" "<<$2<<"; ";}
-	| PAUSE 		{cout<<$1<<"; ";}
-	| START 		{cout<<$1<<"; "; iniciar();}
+time: PAUSE NUMERO		{fprintf(yyout, "entornoPausa(%i);", $2);}
+	| PAUSE 		{fprintf(yyout, "entornoPulsarTecla();");}
+	| START 		{iniciar();}
 	;
 		
-variable: INT ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 0, false, tabla); tipo=0;}
-	| FLOAT ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 1, false, tabla); tipo=1;}
-	| STRING ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 2, false, tabla); tipo=2;}
-	| POS ID		{cout <<$1<<" "<<$2; insertarVariables(variables, $2, 3, false, tabla); tipo=3;}
-	| variable ',' ID	{cout<<","<<$3; insertarVariables(variables, $3, tipo, false, tabla);}
-	| ';'			{cout<<";"<<endl; insertarVariables(variables, "", tipo, true, tabla); mostrar(tabla);}
+variable: INT ID		{insertarVariables(variables, $2, 0, false, tabla); tipo=0;}
+	| FLOAT ID		{insertarVariables(variables, $2, 1, false, tabla); tipo=1;}
+	| STRING ID		{insertarVariables(variables, $2, 2, false, tabla); tipo=2;}
+	| POS ID		{insertarVariables(variables, $2, 3, false, tabla); tipo=3;}
+	| variable ',' ID	{insertarVariables(variables, $3, tipo, false, tabla);}
+	| ';'			{insertarVariables(variables, "", tipo, true, tabla);}
 	| error 		{yyerrok;}  
 	;
 
-asignacion: ID '=' expr		{cout <<$1<<" = "<<$3<<"; "; 	
-				if(buscar(tabla, $1, id))
+asignacion: ID '=' expr		{if(buscar(tabla, $1, id))
 				{
 				 if(floatNumber){tipo=1; id.valor.valor_real = $3;} 
 				 else{tipo=0; id.valor.valor_entero = $3;}
 				 strcpy(id.nombre, $1);
 				 id.tipo = tipo;
 				 insertar (tabla, id);
-				}
-				else
-				 cout<<"ERROR SEMANTICO"<<endl;
-				mostrar(tabla);}
-	| ID '=' CADENA 	{cout <<$1<<" = "<<$3<<"; "; 
-				if(buscar(tabla, $1, id))
+				}}
+	| ID '=' CADENA 	{if(buscar(tabla, $1, id))
 				{
 				 strcpy(id.valor.valor_cad, $3);
 				 strcpy(id.nombre, $1);
 				 id.tipo = 2;
 				 insertar (tabla, id);
-				}
-				else
-				 cout<<"ERROR SEMANTICO"<<endl;
-				mostrar(tabla);}
-	| ID'=''<'expr','expr'>'{cout <<$1<<" = <"<<$4<<","<<$6<<">"<<"; "; 
-				if(buscar(tabla, $1, id))
+				}}
+	| ID'=''<'expr','expr'>'{if(buscar(tabla, $1, id))
 				{
 				 id.valor.valor_pos[0] = $4;
 				 id.valor.valor_pos[1] = $6;
 				 strcpy(id.nombre, $1);
 				 id.tipo = 3;
 				 insertar (tabla, id);
-				}
-				else
-				 cout<<"ERROR SEMANTICO"<<endl;
-				mostrar(tabla);}
+				}}
 	;
 
-sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" <"<<$4<<","<<$6<<"> "<<$8<<"; "; 
-						strcpy(id.nombre, $2);
+sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						id.tipo = 10;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
-						insertar (tabla, id); 
-						mostrar(tabla);}
-	| TEMP ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";
-						if(buscar(tabla, $3, id))
+						insertar (tabla, id);}
+	| TEMP ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
 						 id.tipo = 10;
@@ -202,21 +187,14 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" <"<<$4<<","<
 						 id.pos[1] = id.valor.valor_pos[1];
 						 strcpy(id.alias, $4);
 						 insertar(tabla, id);
-						 mostrar(tabla);
-						}
-						else
-						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
-						}
-	| LIGHT ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" <"<<$4<<","<<$6<<"> "<<$8<<"; ";
-						strcpy(id.nombre, $2);
+						}}
+	| LIGHT ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
 						id.tipo = 11;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
-						insertar (tabla, id); 
-						mostrar(tabla);}
-	| LIGHT ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";
-						if(buscar(tabla, $3, id))
+						insertar (tabla, id); }
+	| LIGHT ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
 						 id.tipo = 11;
@@ -224,21 +202,14 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" <"<<$4<<","<
 						 id.pos[1] = id.valor.valor_pos[1];
 						 strcpy(id.alias, $4);
 						 insertar(tabla, id);
-						 mostrar(tabla);
-						}
-						else
-						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
-						}
-	| SMOKE ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" <"<<$4<<","<<$6<<"> "<<$8<<"; ";
-						strcpy(id.nombre, $2);
+						}}
+	| SMOKE ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
 						id.tipo = 12;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
-						insertar (tabla, id); 
-						mostrar(tabla);}
-	| SMOKE ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";
-						if(buscar(tabla, $3, id))
+						insertar (tabla, id);}
+	| SMOKE ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
 						 id.tipo = 12;
@@ -246,32 +217,39 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{cout <<$1<<" "<<$2<<" <"<<$4<<","<
 						 id.pos[1] = id.valor.valor_pos[1];
 						 strcpy(id.alias, $4);
 						 insertar(tabla, id);
-						 mostrar(tabla);
-						}
-						else
-						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
-						}
+						}}
 	;
 
-sensorInstr: ID REAL				{cout <<$1<<" "<<$2<<"; ";}
-	| ID NUMERO				{cout <<$1<<" "<<$2<<"; ";}
+sensorInstr: ID REAL				{if(buscar(tabla, $1, id))
+						{
+						 if(id.tipo == 10)
+						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_temperature, %f, %s);",id.pos[0],id.pos[1],$2,id.alias);
+						 if(id.tipo == 11)
+						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_light, %f, %s);",id.pos[0],id.pos[1],$2,id.alias);
+						 if(id.tipo == 12)
+						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_smoke, %f, %s);",id.pos[0],id.pos[1],$2,id.alias);
+						}}
+	| ID NUMERO				{if(buscar(tabla, $1, id))
+						{
+						 if(id.tipo == 10)
+						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_temperature, %i, %s);",id.pos[0],id.pos[1],$2,id.alias);
+						 if(id.tipo == 11)
+						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_light, %i, %s);",id.pos[0],id.pos[1],$2,id.alias);
+						 if(id.tipo == 12)
+						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_smoke, %i, %s);",id.pos[0],id.pos[1],$2,id.alias);
+						}}
 	;
 
-actuadorDef: ALARM ID				{cout <<$1<<" "<<$2<<"; ";
-						strcpy(id.nombre, $2);
+actuadorDef: ALARM ID				{strcpy(id.nombre, $2);
 						id.tipo = 20;
-						insertar (tabla, id); 
-						mostrar(tabla);}
-	| SWITCH ID '<'expr','expr'>' CADENA	{cout <<$1<<" "<<$2<<" <"<<$4<<","<<$6<<"> "<<$8<<"; ";
-						strcpy(id.nombre, $2);
+						insertar (tabla, id);}
+	| SWITCH ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
 						id.tipo = 21;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
-						insertar (tabla, id); 
-						mostrar(tabla);}
-	| SWITCH ID ID CADENA			{cout <<$1<<" "<<$2<<" "<<$3<<" "<<$4<<"; ";
-						if(buscar(tabla, $3, id))
+						insertar (tabla, id); }
+	| SWITCH ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
 						 id.tipo = 21;
@@ -279,22 +257,30 @@ actuadorDef: ALARM ID				{cout <<$1<<" "<<$2<<"; ";
 						 id.pos[1] = id.valor.valor_pos[1];
 						 strcpy(id.alias, $4);
 						 insertar(tabla, id);
-						 mostrar(tabla);
-						}
-						else
-						 cout<<"NO EXISTE ESA VARIABLE POS"<<endl;
-						}
-	| MSG ID				{cout <<$1<<" "<<$2<<"; ";
-						strcpy(id.nombre, $2);
+						}}
+	| MSG ID				{strcpy(id.nombre, $2);
 						id.tipo = 22;
-						insertar (tabla, id); 
-						mostrar(tabla);}
+						insertar (tabla, id);}
 	;
 
-actuadorInstr: ID ON 				{cout <<$1<<" "<<$2<<"; ";}
-	| ID OFF				{cout <<$1<<" "<<$2<<"; ";}
-	| ID ON CADENA				{cout <<$1<<" "<<$2<<" "<<$3<<"; ";}
-	| ID ON ID				{cout <<$1<<" "<<$2<<" "<<$3<<"; ";}
+actuadorInstr: ID ON 				{if(buscar(tabla, $1, id))
+						 {
+						  if(id.tipo == 20)
+						   fprintf(yyout, "entornoAlarma();\n");
+						  if(id.tipo == 21)
+						   fprintf(yyout, "entornoPonerAct_Switch(%i, %i, true, %s);\n",id.pos[0],id.pos[1],id.alias);
+						 }}
+	| ID OFF				{if(buscar(tabla, $1, id))
+						 {
+						  if(id.tipo == 21)
+						   fprintf(yyout, "entornoPonerAct_Switch(%i, %i, false, %s);\n",id.pos[0],id.pos[1],id.alias);
+						 }}
+	| ID ON CADENA				{if(buscar(tabla, $1, id))
+						  fprintf(yyout, "entornoMostrarMensaje(%s);",$3);}
+	| ID ON ID				{if(buscar(tabla, $1, id)){
+						  buscar(tabla, $3, id);
+						  fprintf(yyout, "entornoMostrarMensaje(%s);",id.valor.valor_cad);
+						 }}
 	;
 
 expr:    NUMERO	 		{$$=$1;}
@@ -305,9 +291,7 @@ expr:    NUMERO	 		{$$=$1;}
 				   $$ = id.valor.valor_entero; 	
 				  else if(id.tipo == 1)
 				   $$ = id.valor.valor_real;
-				 }
-				 else 
- 				  cout<<"ERROR SEMANTICO"<<endl;}
+				 }}
         | expr '+' expr 	{$$=$1+$3;}       	       
         | expr '-' expr    	{$$=$1-$3;}             
         | expr '*' expr         {$$=$1*$3;}
@@ -348,20 +332,16 @@ int main( int argc, char *argv[] ){
 
 
 		fprintf(yyout, "#include <iostream>\n");
-		fprintf(yyout, "#include ''entorno_dspl.h''\n");
+		fprintf(yyout, "#include \"entorno_dspl.h\"\n");
 		fprintf(yyout, "using namespace std;\n");
-
-		fprintf(yyout, "void inicio (){\n");
-		//fprintf(yyout, 		"entornoPonerSensor(25,25,S_temperature,0,''T1'');");
-		//fprintf(yyout, 		"entornoPonerSensor(250,250,S_smoke,0,''SH'');");
-		//	entornoPonerAct_Switch(150,550,false,"CA");");
-		fprintf(yyout, "}\n");
 		fprintf(yyout, "int main() {\n");
+		fprintf(yyout, 	"if (entornoIniciar()){\n");
 
        		yyparse();
 
-		fprintf(yyout, "return 0;\n");
 		fprintf(yyout, "\t}\n");
+		fprintf(yyout, "return 0;\n");
+		fprintf(yyout, "}\n");
 
 		fclose(yyin);
 		fclose(yyout);
