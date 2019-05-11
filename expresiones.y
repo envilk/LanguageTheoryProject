@@ -91,7 +91,7 @@ void iniciar()
 
 %%
 
-programa: zona1 SEPARADOR zona2 {fprintf(yyout, "entornoBorrarMensaje();\n"); fprintf(yyout, "entornoTerminar()\n");}
+programa: zona1 SEPARADOR zona2 {fprintf(yyout, "entornoBorrarMensaje();\n"); fprintf(yyout, "entornoTerminar();\n");}
 	;
 
 
@@ -103,7 +103,7 @@ zona2: escenario
 	|zona2 escenario
 	;
 
-escenario: SCENE ID '[' {fprintf(yyout, "entornoPonerEscenario(\"%s\")\n", $2);} accion CIERRE
+escenario: SCENE ID '[' {fprintf(yyout, "entornoPonerEscenario(\"%s\");\n", $2);} accion CIERRE
 	;
 
 bucle: REPEAT NUMERO '[' accion CIERRE 	
