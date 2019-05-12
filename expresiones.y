@@ -15,6 +15,7 @@ extern FILE* yyin;
 extern FILE* yyout;
 bool floatNumber = false;
 bool moduloReal = false;
+bool ifCond;
 tipo_tabla tabla;
 tipo_datoTS id;
 tipo_valor valor;
@@ -109,7 +110,7 @@ escenario: SCENE ID '[' {fprintf(yyout, "entornoPonerEscenario(\"%s\");\n", $2);
 bucle: REPEAT NUMERO '[' accion CIERRE 	
  	;
 
-cond: IF exprLog THEN '[' accion CIERRE		
+cond: IF exprLog {if(!$2) break;} THEN '[' accion CIERRE
 	| IF exprLog THEN '[' accion ELSE accion CIERRE 
 	;
 
@@ -220,7 +221,7 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						}}
 	;
 
-sensorInstr: ID REAL				{if(buscar(tabla, $1, id))
+sensorInstr: ID expr				{if(buscar(tabla, $1, id))
 						{
 						 if(id.tipo == 10)
 						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_temperature, %f, %s);",id.pos[0],id.pos[1],$2,id.alias);
@@ -228,15 +229,8 @@ sensorInstr: ID REAL				{if(buscar(tabla, $1, id))
 						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_light, %f, %s);",id.pos[0],id.pos[1],$2,id.alias);
 						 if(id.tipo == 12)
 						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_smoke, %f, %s);",id.pos[0],id.pos[1],$2,id.alias);
-						}}
-	| ID NUMERO				{if(buscar(tabla, $1, id))
-						{
-						 if(id.tipo == 10)
-						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_temperature, %i, %s);",id.pos[0],id.pos[1],$2,id.alias);
-						 if(id.tipo == 11)
-						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_light, %i, %s);",id.pos[0],id.pos[1],$2,id.alias);
-						 if(id.tipo == 12)
-						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_smoke, %i, %s);",id.pos[0],id.pos[1],$2,id.alias);
+						 id.valor.valor_real = $2;
+						 insertar(tabla, id);
 						}}
 	;
 

@@ -39,13 +39,13 @@ void insertar (tipo_tabla &TS, tipo_datoTS identificador)
    {
     TS.tabla[pos].valor.valor_pos[0] = identificador.valor.valor_pos[0];
     TS.tabla[pos].valor.valor_pos[1] = identificador.valor.valor_pos[1];
-   }/*
+   }
    if(identificador.tipo == 10)
+    TS.tabla[pos].valor.valor_real = identificador.valor.valor_real;
    if(identificador.tipo == 11)
+    TS.tabla[pos].valor.valor_real = identificador.valor.valor_real;
    if(identificador.tipo == 12)
-   if(identificador.tipo == 20)
-   if(identificador.tipo == 21)
-   if(identificador.tipo == 22)
+    TS.tabla[pos].valor.valor_real = identificador.valor.valor_real;
 // if(identificador.tipo == 30)*/
   }
   else
@@ -98,17 +98,17 @@ void mostrar(tipo_tabla TS)
   }
   if(TS.tabla[i].tipo == 10)
   {
-   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo;
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_real<<",";
    cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
   }
   if(TS.tabla[i].tipo == 11)
   {
-   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo;
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_real<<",";
    cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
   }
   if(TS.tabla[i].tipo == 12)
   {
-   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo;
+   cout<<"[NOMBRE: "<<TS.tabla[i].nombre<<" TIPO: "<<TS.tabla[i].tipo<<" VALOR: "<<TS.tabla[i].valor.valor_real<<",";
    cout<<" POS: "<<TS.tabla[i].pos[0]<<","<<TS.tabla[i].pos[1]<<" ALIAS: "<<TS.tabla[i].alias<<"]"<<endl;
   }
   if(TS.tabla[i].tipo == 20)
