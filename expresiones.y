@@ -111,7 +111,7 @@ bucle: REPEAT NUMERO '[' accion CIERRE
  	;
 
 cond: IF exprLog THEN '[' {if($2) execute = true; else execute = false;} accion CIERRE {execute = true;}
-	| IF exprLog THEN '[' {if($2) execute = true; else execute = false;} accion {if(!$2) execute = true; else execute = false;} ELSE accion CIERRE {execute = true;}
+	| IF exprLog THEN '[' {if($2) execute = true; else execute = false;} accion CIERRE ELSE '[' {if(!$2) execute = true; else execute = false;} accion CIERRE {execute = true;}
 	;
 
 accion:	instruccion
