@@ -46,7 +46,7 @@ void insertar (tipo_tabla &TS, tipo_datoTS identificador)
     TS.tabla[pos].valor.valor_real = identificador.valor.valor_real;
    if(identificador.tipo == 12)
     TS.tabla[pos].valor.valor_real = identificador.valor.valor_real;
-// if(identificador.tipo == 30)*/
+// if(identificador.tipo == 30)
   }
   else
    printf("ERROR DE TIPO");

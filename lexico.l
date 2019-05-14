@@ -78,5 +78,6 @@ false					yylval.bolean = false; return FALSE;
 {cad} 					strcpy(yylval.cadena, yytext); return CADENA;
 {real}					yylval.real = atof(yytext); return REAL;
 [\t ]					;	
+[\n]					n_lineas++;
 . 					return (yytext[0]);
 %%

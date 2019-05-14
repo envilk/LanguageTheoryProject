@@ -15,7 +15,7 @@ extern FILE* yyin;
 extern FILE* yyout;
 bool floatNumber = false;
 bool moduloReal = false;
-bool ifCond;
+bool execute = true;
 tipo_tabla tabla;
 tipo_datoTS id;
 tipo_valor valor;
@@ -110,8 +110,8 @@ escenario: SCENE ID '[' {fprintf(yyout, "entornoPonerEscenario(\"%s\");\n", $2);
 bucle: REPEAT NUMERO '[' accion CIERRE 	
  	;
 
-cond: IF exprLog {if(!$2) break;} THEN '[' accion CIERRE
-	| IF exprLog THEN '[' accion ELSE accion CIERRE 
+cond: IF exprLog THEN '[' {if($2) execute = true; else execute = false;} accion CIERRE {execute = true;}
+	| IF exprLog THEN '[' {if($2) execute = true; else execute = false;} accion {if(!$2) execute = true; else execute = false;} ELSE accion CIERRE {execute = true;}
 	;
 
 accion:	instruccion
@@ -135,8 +135,8 @@ instruccion: sensorInstr ';'
 	|error ';'			{yyerrok;}  
 	;
 
-time: PAUSE NUMERO		{fprintf(yyout, "entornoPausa(%i);", $2);}
-	| PAUSE 		{fprintf(yyout, "entornoPulsarTecla();");}
+time: PAUSE NUMERO		{if(execute) fprintf(yyout, "entornoPausa(%i);\n", $2);}
+	| PAUSE 		{if(execute) fprintf(yyout, "entornoPulsarTecla();\n");}
 	| START 		{iniciar();}
 	;
 		
@@ -221,14 +221,14 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						}}
 	;
 
-sensorInstr: ID expr				{if(buscar(tabla, $1, id))
+sensorInstr: ID expr				{if(buscar(tabla, $1, id)  && execute)
 						{
 						 if(id.tipo == 10)
-						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_temperature, %f, %s);",id.pos[0],id.pos[1],$2,id.alias);
+						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_temperature, %f, %s);\n",id.pos[0],id.pos[1],$2,id.alias);
 						 if(id.tipo == 11)
-						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_light, %f, %s);",id.pos[0],id.pos[1],$2,id.alias);
+						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_light, %f, %s);\n",id.pos[0],id.pos[1],$2,id.alias);
 						 if(id.tipo == 12)
-						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_smoke, %f, %s);",id.pos[0],id.pos[1],$2,id.alias);
+						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_smoke, %f, %s);\n",id.pos[0],id.pos[1],$2,id.alias);
 						 id.valor.valor_real = $2;
 						 insertar(tabla, id);
 						}}
@@ -257,23 +257,23 @@ actuadorDef: ALARM ID				{strcpy(id.nombre, $2);
 						insertar (tabla, id);}
 	;
 
-actuadorInstr: ID ON 				{if(buscar(tabla, $1, id))
+actuadorInstr: ID ON 				{if(buscar(tabla, $1, id) && execute)
 						 {
 						  if(id.tipo == 20)
 						   fprintf(yyout, "entornoAlarma();\n");
 						  if(id.tipo == 21)
 						   fprintf(yyout, "entornoPonerAct_Switch(%i, %i, true, %s);\n",id.pos[0],id.pos[1],id.alias);
 						 }}
-	| ID OFF				{if(buscar(tabla, $1, id))
+	| ID OFF				{if(buscar(tabla, $1, id) && execute)
 						 {
 						  if(id.tipo == 21)
 						   fprintf(yyout, "entornoPonerAct_Switch(%i, %i, false, %s);\n",id.pos[0],id.pos[1],id.alias);
 						 }}
-	| ID ON CADENA				{if(buscar(tabla, $1, id))
-						  fprintf(yyout, "entornoMostrarMensaje(%s);",$3);}
-	| ID ON ID				{if(buscar(tabla, $1, id)){
+	| ID ON CADENA				{if(buscar(tabla, $1, id) && execute)
+						  fprintf(yyout, "entornoMostrarMensaje(%s);\n",$3);}
+	| ID ON ID				{if(buscar(tabla, $1, id) && execute){
 						  buscar(tabla, $3, id);
-						  fprintf(yyout, "entornoMostrarMensaje(%s);",id.valor.valor_cad);
+						  fprintf(yyout, "entornoMostrarMensaje(%s);\n",id.valor.valor_cad);
 						 }}
 	;
 
@@ -284,6 +284,12 @@ expr:    NUMERO	 		{$$=$1;}
 				  if(id.tipo == 0)
 				   $$ = id.valor.valor_entero; 	
 				  else if(id.tipo == 1)
+				   $$ = id.valor.valor_real;
+				  else if(id.tipo == 10)
+				   $$ = id.valor.valor_real;
+				  else if(id.tipo == 11)
+				   $$ = id.valor.valor_real;
+				  else if(id.tipo == 12)
 				   $$ = id.valor.valor_real;
 				 }}
         | expr '+' expr 	{$$=$1+$3;}       	       
@@ -299,7 +305,6 @@ expr:    NUMERO	 		{$$=$1;}
 
 exprLog: TRUE			{$$=$1;}
 	|FALSE			{$$=$1;}
-	|ID			{$$=false;}//PARA PROBAR
 	| exprLog EQUAL exprLog	{$$=$1==$3;}
 	| exprLog NOTEQUAL exprLog{$$=$1!=$3;}
 	| exprLog OR exprLog	{$$=$1||$3;}
