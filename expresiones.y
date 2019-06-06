@@ -110,8 +110,11 @@ escenario: SCENE ID '[' {fprintf(yyout, "entornoPonerEscenario(\"%s\");\n", $2);
 bucle: REPEAT NUMERO '[' accion CIERRE 	
  	;
 
-cond: IF exprLog THEN '[' {if($2) execute = true; else execute = false;} accion CIERRE {execute = true;}
-	| IF exprLog THEN '[' {if($2) execute = true; else execute = false;} accion CIERRE ELSE '[' {if(!$2) execute = true; else execute = false;} accion CIERRE {execute = true;}
+cond: IF exprLog THEN '[' {if($2) execute = true; else execute = false;} accion cuerpoCond
+	;
+
+cuerpoCond: CIERRE {execute = true;}
+ 	| ']' ELSE '[' {if(!execute) execute = true; else execute = false;} accion CIERRE {execute = true;}
 	;
 
 accion:	instruccion

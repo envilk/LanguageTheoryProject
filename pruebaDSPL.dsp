@@ -36,11 +36,14 @@ scene Winter [
 	pause 3;
 	Whatsapp OFF;	
 	indoorTemp	28.2;	#el sensor indoorTemp ha detectado una temperatura de 28.2 grados
-	if indoorTemp > winterTemp + 5
+	if indoorTemp < winterTemp + 5
 	then [ 
 		Heat OFF;    #apagar calefacción
 		Whatsapp ON "Calefacción apagada";
-	];
+	]
+	else [  
+		Whatsapp ON "Calefacción";
+ 	];
 	pause;
 	Whatsapp OFF;	
 ];
