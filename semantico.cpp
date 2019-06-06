@@ -46,7 +46,6 @@ void insertar (tipo_tabla &TS, tipo_datoTS identificador)
     TS.tabla[pos].valor.valor_real = identificador.valor.valor_real;
    if(identificador.tipo == 12)
     TS.tabla[pos].valor.valor_real = identificador.valor.valor_real;
-// if(identificador.tipo == 30)
   }
   else
    printf("ERROR DE TIPO");
@@ -141,40 +140,13 @@ void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool 
  }
  else
  {
-  //strcpy(vars.variables[vars.max], cadena);
-  //vars.max++;
   tipo_datoTS id;
   for(int i=0;i<vars.max;i++)
   { 
    strcpy(id.nombre, vars.variables[i]);
    id.tipo = tipo;
-   //VALOR NO SE INSERTA YA QUE SOLO SE DEFINE, NO SE ASIGNA
    insertar(TS, id);
   }
   vars.max = 0;
  }
 }
-
-
-
-/*
-int main()
-{
- tipo_tabla tabla;
- tipo_datoTS id;
- strcpy(id.nombre, "x");
- id.tipo = 0;
- id.valor.valor_entero = 3;
- insertar(tabla, id);
- strcpy(id.nombre, "joserra");
- id.tipo = 0;
- id.valor.valor_entero = 4;
- insertar(tabla, id);
- strcpy(id.nombre, "y");
- id.tipo = 0;
- id.valor.valor_entero = 123;
- insertar(tabla, id);
- mostrar(tabla);
- return 0;
-}
-*/

@@ -23,6 +23,9 @@ tipo_valor valor;
 //Indica el tipo al definir varias variables con el mismo tipo;
 int tipo;
 
+//Indica el numero de bucles anidados
+int nBucles=0;
+
 //typedef char tipo_cadena[50];
 //typedef tipo_cadena variables[50];
 tipo_variables variables;
@@ -107,7 +110,7 @@ zona2: escenario
 escenario: SCENE ID '[' {fprintf(yyout, "entornoPonerEscenario(\"%s\");\n", $2);} accion CIERRE
 	;
 
-bucle: REPEAT NUMERO '[' accion CIERRE 	
+bucle: REPEAT NUMERO {fprintf(yyout, "for(int i_%i=0;i_%i<%i;i_%i++){\n", nBucles, nBucles, $2, nBucles);nBucles++;} '[' accion {fprintf(yyout, "}\n");} CIERRE 	
  	;
 
 cond: IF exprLog THEN '[' {if($2) execute = true; else execute = false;} accion cuerpoCond

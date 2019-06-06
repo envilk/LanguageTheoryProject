@@ -56,7 +56,11 @@ scene Fire [
 	then [
 		Whatsapp ON msg;			
 		repeat 2 [   #se producirán 4 pitidos en intervalos de 1 segundo
-			A ON;   
+			A ON;  
+			repeat 4 [   #se producirán 4 pitidos en intervalos de 1 segundo
+				A ON;   
+				pause 3;
+			]; 
 			pause 1;
 		];
 		Whatsapp OFF;	

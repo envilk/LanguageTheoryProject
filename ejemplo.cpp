@@ -22,8 +22,14 @@ entornoPonerAct_Switch(480,420,false,"CA");
 entornoPausa(1);
 entornoPonerSensor(250,250, S_smoke, 100.000000, "SH");
 entornoMostrarMensaje("Alarma. Alta probabilidad de incendio");
+for(int i_0=0;i_0<2;i_0++){
 entornoAlarma();
+for(int i_1=0;i_1<4;i_1++){
+entornoAlarma();
+entornoPausa(3);
+}
 entornoPausa(1);
+}
 entornoBorrarMensaje();
 entornoTerminar();
 	}
