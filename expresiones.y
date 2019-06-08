@@ -115,7 +115,6 @@ void iniciar()
 %%
 
 programa: zona1 SEPARADOR zona2 {fprintf(yyout, "entornoBorrarMensaje();\n"); fprintf(yyout, "entornoTerminar();\n");}
-	| error 		{yyerrok;}  
 	;
 
 
@@ -154,6 +153,7 @@ accion:	instruccion
 	| accion instruccion
 	| accion bucle 
 	| accion cond 
+	| error 		{yyerrok;}  
 	;
 
 definicion: asignacion ';'		{floatNumber = false; moduloReal = false;}
@@ -184,7 +184,6 @@ variable: INT ID		{insertarVariables(variables, $2, 0, false, tabla, n_lineas); 
 	| POS ID		{insertarVariables(variables, $2, 3, false, tabla, n_lineas); tipo=3;}
 	| variable ',' ID	{insertarVariables(variables, $3, tipo, false, tabla, n_lineas);}
 	| ';'			{insertarVariables(variables, "", tipo, true, tabla, n_lineas);}
-	| error 		{yyerrok;}  
 	;
 
 asignacion: ID '=' expr		{if(buscar(tabla, $1, id))
