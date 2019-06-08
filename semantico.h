@@ -28,11 +28,11 @@ struct tipo_tabla{
  tipo_datoTS tabla[100];
 };
 
-void insertar (tipo_tabla &TS, tipo_datoTS identificador);
+void insertar (tipo_tabla &TS, tipo_datoTS identificador, int n_lineas);
 
 bool buscar (tipo_tabla TS, tipo_cadena nombre, tipo_datoTS &identificador);
 
-void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool end, tipo_tabla &TS);
+void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool end, tipo_tabla &TS, int n_lineas);
 
 void mostrar(tipo_tabla TS);
 

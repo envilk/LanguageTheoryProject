@@ -8,7 +8,7 @@ using namespace std;
 
 
 
-void insertar (tipo_tabla &TS, tipo_datoTS identificador)
+void insertar (tipo_tabla &TS, tipo_datoTS identificador, int n_lineas)
 {
  bool encontrado = false;
  int pos;
@@ -48,7 +48,7 @@ void insertar (tipo_tabla &TS, tipo_datoTS identificador)
     TS.tabla[pos].valor.valor_real = identificador.valor.valor_real;
   }
   else
-   printf("ERROR DE TIPO");
+   cout<<"Error semántico de tipo de variable línea "<<n_lineas<<endl;
  }
 }
 
@@ -131,7 +131,7 @@ void mostrar(tipo_tabla TS)
 
 
 
-void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool end, tipo_tabla &TS)
+void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool end, tipo_tabla &TS, int n_lineas)
 {
  if(!end)
  {
@@ -145,7 +145,7 @@ void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool 
   { 
    strcpy(id.nombre, vars.variables[i]);
    id.tipo = tipo;
-   insertar(TS, id);
+   insertar(TS, id, n_lineas);
   }
   vars.max = 0;
  }

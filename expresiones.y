@@ -4,6 +4,7 @@
 #include <iostream>
 #include <math.h>
 #include <string.h>
+#include <unistd.h>
 #include "semantico.h"
 
 using namespace std;
@@ -16,6 +17,7 @@ extern FILE* yyout;
 bool floatNumber = false;
 bool moduloReal = false;
 bool execute = true;
+bool errorFichero = false;
 tipo_tabla tabla;
 tipo_datoTS id;
 tipo_valor valor;
@@ -33,6 +35,12 @@ tipo_variables variables;
 //definición de procedimientos auxiliares
 void yyerror(const char* s){         /*    llamada por cada error sintactico de yacc */
 	cout << "Error sintáctico en la línea "<< n_lineas <<endl;	
+	errorFichero = true;
+} 
+
+void errorSemantico(){         /*    llamada por cada error semantico de la tabla de simbolos */
+	cout << "Error semántico en la línea "<< n_lineas <<endl;	
+	errorFichero = true;
 } 
 
 void iniciar()
@@ -96,6 +104,7 @@ void iniciar()
 %%
 
 programa: zona1 SEPARADOR zona2 {fprintf(yyout, "entornoBorrarMensaje();\n"); fprintf(yyout, "entornoTerminar();\n");}
+	| error 		{yyerrok;}  
 	;
 
 
@@ -110,7 +119,17 @@ zona2: escenario
 escenario: SCENE ID '[' {fprintf(yyout, "entornoPonerEscenario(\"%s\");\n", $2);} accion CIERRE
 	;
 
-bucle: REPEAT NUMERO {fprintf(yyout, "for(int i_%i=0;i_%i<%i;i_%i++){\n", nBucles, nBucles, $2, nBucles);nBucles++;} '[' accion {fprintf(yyout, "}\n");} CIERRE 	
+bucle: REPEAT expr {if(!floatNumber){
+		       fprintf(yyout, "for(int i_%i=0;i_%i<%lf;i_%i++){\n", nBucles, nBucles, $2, nBucles);
+		       nBucles++;}
+	 	      else
+		       errorSemantico();} 
+		      '[' accion 
+		      {if(!floatNumber)
+			fprintf(yyout, "}\n");
+		       else
+		        errorSemantico();}
+		       CIERRE 	
  	;
 
 cond: IF exprLog THEN '[' {if($2) execute = true; else execute = false;} accion cuerpoCond
@@ -130,28 +149,32 @@ accion:	instruccion
 
 definicion: asignacion ';'		{floatNumber = false; moduloReal = false;}
 	| variable 
-	|sensorDef ';'
-	|actuadorDef ';'
+	|sensorDef ';'			{floatNumber = false; moduloReal = false;}
+	|actuadorDef ';'		{floatNumber = false; moduloReal = false;}
 	|error ';'			{yyerrok;}  
 	;
 
-instruccion: sensorInstr ';'
+instruccion: sensorInstr ';'		{floatNumber = false; moduloReal = false;}
 	|actuadorInstr ';'
 	|time ';'
 	|error ';'			{yyerrok;}  
 	;
 
-time: PAUSE NUMERO		{if(execute) fprintf(yyout, "entornoPausa(%i);\n", $2);}
+time: PAUSE expr		{if(execute){
+  				   if(!floatNumber)
+				    fprintf(yyout, "entornoPausa(%lf);\n", $2);
+				   else {errorSemantico();}
+				 }}
 	| PAUSE 		{if(execute) fprintf(yyout, "entornoPulsarTecla();\n");}
 	| START 		{iniciar();}
 	;
 		
-variable: INT ID		{insertarVariables(variables, $2, 0, false, tabla); tipo=0;}
-	| FLOAT ID		{insertarVariables(variables, $2, 1, false, tabla); tipo=1;}
-	| STRING ID		{insertarVariables(variables, $2, 2, false, tabla); tipo=2;}
-	| POS ID		{insertarVariables(variables, $2, 3, false, tabla); tipo=3;}
-	| variable ',' ID	{insertarVariables(variables, $3, tipo, false, tabla);}
-	| ';'			{insertarVariables(variables, "", tipo, true, tabla);}
+variable: INT ID		{insertarVariables(variables, $2, 0, false, tabla, n_lineas); tipo=0;}
+	| FLOAT ID		{insertarVariables(variables, $2, 1, false, tabla, n_lineas); tipo=1;}
+	| STRING ID		{insertarVariables(variables, $2, 2, false, tabla, n_lineas); tipo=2;}
+	| POS ID		{insertarVariables(variables, $2, 3, false, tabla, n_lineas); tipo=3;}
+	| variable ',' ID	{insertarVariables(variables, $3, tipo, false, tabla, n_lineas);}
+	| ';'			{insertarVariables(variables, "", tipo, true, tabla, n_lineas);}
 	| error 		{yyerrok;}  
 	;
 
@@ -161,23 +184,33 @@ asignacion: ID '=' expr		{if(buscar(tabla, $1, id))
 				 else{tipo=0; id.valor.valor_entero = $3;}
 				 strcpy(id.nombre, $1);
 				 id.tipo = tipo;
-				 insertar (tabla, id);
-				}}
+				 insertar (tabla, id, n_lineas);
+				}
+				else
+				 errorSemantico();}
 	| ID '=' CADENA 	{if(buscar(tabla, $1, id))
 				{
 				 strcpy(id.valor.valor_cad, $3);
 				 strcpy(id.nombre, $1);
 				 id.tipo = 2;
-				 insertar (tabla, id);
-				}}
+				 insertar (tabla, id, n_lineas);
+				}
+				else
+				 errorSemantico();}
 	| ID'=''<'expr','expr'>'{if(buscar(tabla, $1, id))
 				{
+				 if(!floatNumber){
 				 id.valor.valor_pos[0] = $4;
 				 id.valor.valor_pos[1] = $6;
 				 strcpy(id.nombre, $1);
 				 id.tipo = 3;
-				 insertar (tabla, id);
-				}}
+				 insertar (tabla, id, n_lineas);
+				 }
+				 else
+				  errorSemantico();
+				}
+				else
+				 errorSemantico();}
 	;
 
 sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
@@ -185,7 +218,7 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
-						insertar (tabla, id);}
+						insertar (tabla, id, n_lineas);}
 	| TEMP ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
@@ -193,14 +226,16 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						 id.pos[0] = id.valor.valor_pos[0];
 						 id.pos[1] = id.valor.valor_pos[1];
 						 strcpy(id.alias, $4);
-						 insertar(tabla, id);
-						}}
+						 insertar(tabla, id, n_lineas);
+						}
+						 else
+						  errorSemantico();}
 	| LIGHT ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
 						id.tipo = 11;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
-						insertar (tabla, id); }
+						insertar (tabla, id, n_lineas); }
 	| LIGHT ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
@@ -208,14 +243,16 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						 id.pos[0] = id.valor.valor_pos[0];
 						 id.pos[1] = id.valor.valor_pos[1];
 						 strcpy(id.alias, $4);
-						 insertar(tabla, id);
-						}}
+						 insertar(tabla, id, n_lineas);
+						}
+						 else
+						  errorSemantico();}
 	| SMOKE ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
 						id.tipo = 12;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
-						insertar (tabla, id);}
+						insertar (tabla, id, n_lineas);}
 	| SMOKE ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
@@ -223,32 +260,38 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						 id.pos[0] = id.valor.valor_pos[0];
 						 id.pos[1] = id.valor.valor_pos[1];
 						 strcpy(id.alias, $4);
-						 insertar(tabla, id);
-						}}
+						 insertar(tabla, id, n_lineas);
+						}
+						 else
+						  errorSemantico();}
 	;
 
-sensorInstr: ID expr				{if(buscar(tabla, $1, id)  && execute)
+sensorInstr: ID expr				{if(buscar(tabla, $1, id))
 						{
-						 if(id.tipo == 10)
-						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_temperature, %f, %s);\n",id.pos[0],id.pos[1],$2,id.alias);
-						 if(id.tipo == 11)
-						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_light, %f, %s);\n",id.pos[0],id.pos[1],$2,id.alias);
-						 if(id.tipo == 12)
-						  fprintf(yyout, "entornoPonerSensor(%i,%i, S_smoke, %f, %s);\n",id.pos[0],id.pos[1],$2,id.alias);
-						 id.valor.valor_real = $2;
-						 insertar(tabla, id);
-						}}
+						 if(execute){
+						  if(id.tipo == 10)
+						   fprintf(yyout, "entornoPonerSensor(%i,%i, S_temperature, %f, %s);\n",id.pos[0],id.pos[1],$2,id.alias);
+						  if(id.tipo == 11)
+						   fprintf(yyout, "entornoPonerSensor(%i,%i, S_light, %f, %s);\n",id.pos[0],id.pos[1],$2,id.alias);
+						  if(id.tipo == 12)
+						   fprintf(yyout, "entornoPonerSensor(%i,%i, S_smoke, %f, %s);\n",id.pos[0],id.pos[1],$2,id.alias);
+						   id.valor.valor_real = $2;
+						   insertar(tabla, id, n_lineas);
+ 						 }
+						}
+						 else
+						  errorSemantico();}
 	;
 
 actuadorDef: ALARM ID				{strcpy(id.nombre, $2);
 						id.tipo = 20;
-						insertar (tabla, id);}
+						insertar (tabla, id, n_lineas);}
 	| SWITCH ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
 						id.tipo = 21;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
-						insertar (tabla, id); }
+						insertar (tabla, id, n_lineas); }
 	| SWITCH ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
@@ -256,31 +299,47 @@ actuadorDef: ALARM ID				{strcpy(id.nombre, $2);
 						 id.pos[0] = id.valor.valor_pos[0];
 						 id.pos[1] = id.valor.valor_pos[1];
 						 strcpy(id.alias, $4);
-						 insertar(tabla, id);
-						}}
+						 insertar(tabla, id, n_lineas);
+						}
+						 else
+						  errorSemantico();}
 	| MSG ID				{strcpy(id.nombre, $2);
 						id.tipo = 22;
-						insertar (tabla, id);}
+						insertar (tabla, id, n_lineas);}
 	;
 
-actuadorInstr: ID ON 				{if(buscar(tabla, $1, id) && execute)
+actuadorInstr: ID ON 				{if(buscar(tabla, $1, id))
 						 {
+						 if(execute){
 						  if(id.tipo == 20)
 						   fprintf(yyout, "entornoAlarma();\n");
 						  if(id.tipo == 21)
 						   fprintf(yyout, "entornoPonerAct_Switch(%i, %i, true, %s);\n",id.pos[0],id.pos[1],id.alias);
-						 }}
-	| ID OFF				{if(buscar(tabla, $1, id) && execute)
-						 {
+						  }
+						 }
+						 else
+						  errorSemantico();}
+	| ID OFF				{if(buscar(tabla, $1, id)){
+						 if(execute){
 						  if(id.tipo == 21)
 						   fprintf(yyout, "entornoPonerAct_Switch(%i, %i, false, %s);\n",id.pos[0],id.pos[1],id.alias);
-						 }}
-	| ID ON CADENA				{if(buscar(tabla, $1, id) && execute)
+						  }
+						 }
+						 else
+						  errorSemantico();}
+	| ID ON CADENA				{if(buscar(tabla, $1, id)){
+						 if(execute)
 						  fprintf(yyout, "entornoMostrarMensaje(%s);\n",$3);}
-	| ID ON ID				{if(buscar(tabla, $1, id) && execute){
+						 else
+						  errorSemantico();}
+	| ID ON ID				{if(buscar(tabla, $1, id)){
+						 if(execute){
 						  buscar(tabla, $3, id);
 						  fprintf(yyout, "entornoMostrarMensaje(%s);\n",id.valor.valor_cad);
-						 }}
+						  }
+						 }
+						 else
+						  errorSemantico();}
 	;
 
 expr:    NUMERO	 		{$$=$1;}
@@ -297,7 +356,9 @@ expr:    NUMERO	 		{$$=$1;}
 				   $$ = id.valor.valor_real;
 				  else if(id.tipo == 12)
 				   $$ = id.valor.valor_real;
-				 }}
+				 }
+				 else
+				  errorSemantico();}
         | expr '+' expr 	{$$=$1+$3;}       	       
         | expr '-' expr    	{$$=$1-$3;}             
         | expr '*' expr         {$$=$1*$3;}
@@ -333,7 +394,7 @@ int main( int argc, char *argv[] ){
 	else {
      		yyin=fopen(argv[1],"rt");
 		yyout=fopen(argv[2],"w");
-     		n_lineas = 0;
+     		n_lineas = 1;
 
 
 		fprintf(yyout, "#include <iostream>\n");
@@ -350,6 +411,12 @@ int main( int argc, char *argv[] ){
 
 		fclose(yyin);
 		fclose(yyout);
+		if(errorFichero){
+			cout<<"El fichero "<<argv[2]<<" no se creará debido a un error..."<<endl;
+			if(0 > execl("/bin/rm", "rm", argv[2], NULL)){
+				cout<<"ERROR AL BORRAR FICHERO "<<argv[2]<<endl;
+			}
+		}
          	return 0;
 	}
 }

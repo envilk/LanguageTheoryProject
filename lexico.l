@@ -32,7 +32,7 @@ cad ["][^"]*["]
 %%
 
 "#"                     BEGIN(COM1); 
-<COM1>\n                BEGIN(0);
+<COM1>\n                BEGIN(0); n_lineas++;
 <COM1>.           	;
 
 scene					strcpy(yylval.cadena, yytext); return SCENE;
