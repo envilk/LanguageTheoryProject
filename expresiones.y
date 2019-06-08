@@ -50,6 +50,10 @@ void errorSemanticoOperacionInvalida(){       /*    llamada por error semantico 
 	cout << "Error semántico en la línea "<< n_lineas <<" por realizar operaciones aritméticas con variables de tipo position o string"<<endl;	
 }
 
+void errorSemanticoPosicionInvalida(){       /*    llamada por error semantico de la tabla de simbolos */
+	cout << "Error semántico en la línea "<< n_lineas <<" por utilizar posiciones fuera de la zona de trabajo permitida (400 * 600) que está definida en la librerı́a entorno dspl"<<endl;	
+}
+
 void iniciar()
 {
  for(int i=0;i<tabla.max;i++)
@@ -205,11 +209,15 @@ asignacion: ID '=' expr		{if(buscar(tabla, $1, id))
 	| ID'=''<'expr','expr'>'{if(buscar(tabla, $1, id))
 				{
 				 if(!floatNumber){
-				 id.valor.valor_pos[0] = $4;
-				 id.valor.valor_pos[1] = $6;
-				 strcpy(id.nombre, $1);
-				 id.tipo = 3;
-				 insertar (tabla, id, n_lineas);
+				  if($4<=400 && $6<=600){
+			           id.valor.valor_pos[0] = $4;
+				   id.valor.valor_pos[1] = $6;
+				   strcpy(id.nombre, $1);
+				   id.tipo = 3;
+				   insertar (tabla, id, n_lineas);
+				  }
+				  else
+				   errorSemanticoPosicionInvalida();
 				 }
 				 else
 				  errorSemanticoTipoReal();
@@ -218,12 +226,15 @@ asignacion: ID '=' expr		{if(buscar(tabla, $1, id))
 				 errorSemanticoDefinido();}
 	;
 
-sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
+sensorDef: TEMP ID '<'expr','expr'>' CADENA   {if($4<=400 && $6<=600){
+						strcpy(id.nombre, $2);
 						id.tipo = 10;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
 						insertar (tabla, id, n_lineas);}
+					       else
+						errorSemanticoPosicionInvalida();} 
 	| TEMP ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
@@ -235,12 +246,15 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						}
 						 else
 						  errorSemanticoDefinido();}
-	| LIGHT ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
+	| LIGHT ID '<'expr','expr'>' CADENA   {if($4<=400 && $6<=600){
+						strcpy(id.nombre, $2);
 						id.tipo = 11;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
 						insertar (tabla, id, n_lineas); }
+					       else
+						errorSemanticoPosicionInvalida();}
 	| LIGHT ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
@@ -252,12 +266,15 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						}
 						 else
 						  errorSemanticoDefinido();}
-	| SMOKE ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
+	| SMOKE ID '<'expr','expr'>' CADENA    {if($4<=400 && $6<=600){
+						strcpy(id.nombre, $2);
 						id.tipo = 12;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
 						insertar (tabla, id, n_lineas);}
+					       else
+						errorSemanticoPosicionInvalida();}
 	| SMOKE ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);
@@ -291,12 +308,15 @@ sensorInstr: ID expr				{if(buscar(tabla, $1, id))
 actuadorDef: ALARM ID				{strcpy(id.nombre, $2);
 						id.tipo = 20;
 						insertar (tabla, id, n_lineas);}
-	| SWITCH ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
+	| SWITCH ID '<'expr','expr'>' CADENA  {if($4<=400 && $6<=600){
+						strcpy(id.nombre, $2);
 						id.tipo = 21;
 						id.pos[0] = $4;
 						id.pos[1] = $6;
 						strcpy(id.alias, $8);
 						insertar (tabla, id, n_lineas); }
+					       else
+						errorSemanticoPosicionInvalida();}
 	| SWITCH ID ID CADENA			{if(buscar(tabla, $3, id))
 						{
 						 strcpy(id.nombre, $2);

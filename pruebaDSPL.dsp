@@ -19,7 +19,7 @@ temperature indoorTemp p_Sensor "T1";	#sensor de temperatura
 smoke S <250,250> "SH";			#sensor de humo
 
 alarm A;			#alarma sonora
-switch Heat <480,420> "CA";	#calefacción
+switch Heat <400,420> "CA";	#calefacción
 message Whatsapp;		#envío de mensajes
 
 %%
@@ -57,10 +57,6 @@ scene Fire [
 		Whatsapp ON msg;			
 		repeat 2 [   #se producirán 4 pitidos en intervalos de 1 segundo
 			A ON;  
-			repeat 4 [   #se producirán 4 pitidos en intervalos de 1 segundo
-				A ON;   
-				pause 3;
-			]; 
 			pause 1;
 		];
 		Whatsapp OFF;	
