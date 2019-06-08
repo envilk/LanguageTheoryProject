@@ -38,10 +38,17 @@ void yyerror(const char* s){         /*    llamada por cada error sintactico de 
 	errorFichero = true;
 } 
 
-void errorSemantico(){         /*    llamada por cada error semantico de la tabla de simbolos */
-	cout << "Error semántico en la línea "<< n_lineas <<endl;	
-	errorFichero = true;
+void errorSemanticoDefinido(){         /*    llamada por error semantico de la tabla de simbolos */
+	cout << "Error semántico en la línea "<< n_lineas <<" por no estar definida la variable, sensor o actuador"<<endl;
 } 
+
+void errorSemanticoTipoReal(){         /*    llamada por error semantico de la tabla de simbolos */
+	cout << "Error semántico en la línea "<< n_lineas <<" por utilizar valores de tipo real al definir una posición o en una instrucción repeat o pause"<<endl;	
+} 
+
+void errorSemanticoOperacionInvalida(){       /*    llamada por error semantico de la tabla de simbolos */
+	cout << "Error semántico en la línea "<< n_lineas <<" por realizar operaciones aritméticas con variables de tipo position o string"<<endl;	
+}
 
 void iniciar()
 {
@@ -123,12 +130,10 @@ bucle: REPEAT expr {if(!floatNumber){
 		       fprintf(yyout, "for(int i_%i=0;i_%i<%lf;i_%i++){\n", nBucles, nBucles, $2, nBucles);
 		       nBucles++;}
 	 	      else
-		       errorSemantico();} 
+		       errorSemanticoTipoReal();} 
 		      '[' accion 
 		      {if(!floatNumber)
-			fprintf(yyout, "}\n");
-		       else
-		        errorSemantico();}
+			fprintf(yyout, "}\n");}
 		       CIERRE 	
  	;
 
@@ -163,7 +168,7 @@ instruccion: sensorInstr ';'		{floatNumber = false; moduloReal = false;}
 time: PAUSE expr		{if(execute){
   				   if(!floatNumber)
 				    fprintf(yyout, "entornoPausa(%lf);\n", $2);
-				   else {errorSemantico();}
+				   else {errorSemanticoTipoReal();}
 				 }}
 	| PAUSE 		{if(execute) fprintf(yyout, "entornoPulsarTecla();\n");}
 	| START 		{iniciar();}
@@ -187,7 +192,7 @@ asignacion: ID '=' expr		{if(buscar(tabla, $1, id))
 				 insertar (tabla, id, n_lineas);
 				}
 				else
-				 errorSemantico();}
+				 errorSemanticoDefinido();}
 	| ID '=' CADENA 	{if(buscar(tabla, $1, id))
 				{
 				 strcpy(id.valor.valor_cad, $3);
@@ -196,7 +201,7 @@ asignacion: ID '=' expr		{if(buscar(tabla, $1, id))
 				 insertar (tabla, id, n_lineas);
 				}
 				else
-				 errorSemantico();}
+				 errorSemanticoDefinido();}
 	| ID'=''<'expr','expr'>'{if(buscar(tabla, $1, id))
 				{
 				 if(!floatNumber){
@@ -207,10 +212,10 @@ asignacion: ID '=' expr		{if(buscar(tabla, $1, id))
 				 insertar (tabla, id, n_lineas);
 				 }
 				 else
-				  errorSemantico();
+				  errorSemanticoTipoReal();
 				}
 				else
-				 errorSemantico();}
+				 errorSemanticoDefinido();}
 	;
 
 sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
@@ -229,7 +234,7 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						 insertar(tabla, id, n_lineas);
 						}
 						 else
-						  errorSemantico();}
+						  errorSemanticoDefinido();}
 	| LIGHT ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
 						id.tipo = 11;
 						id.pos[0] = $4;
@@ -246,7 +251,7 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						 insertar(tabla, id, n_lineas);
 						}
 						 else
-						  errorSemantico();}
+						  errorSemanticoDefinido();}
 	| SMOKE ID '<'expr','expr'>' CADENA	{strcpy(id.nombre, $2);
 						id.tipo = 12;
 						id.pos[0] = $4;
@@ -263,7 +268,7 @@ sensorDef: TEMP ID '<'expr','expr'>' CADENA 	{strcpy(id.nombre, $2);
 						 insertar(tabla, id, n_lineas);
 						}
 						 else
-						  errorSemantico();}
+						  errorSemanticoDefinido();}
 	;
 
 sensorInstr: ID expr				{if(buscar(tabla, $1, id))
@@ -280,7 +285,7 @@ sensorInstr: ID expr				{if(buscar(tabla, $1, id))
  						 }
 						}
 						 else
-						  errorSemantico();}
+						  errorSemanticoDefinido();}
 	;
 
 actuadorDef: ALARM ID				{strcpy(id.nombre, $2);
@@ -302,7 +307,7 @@ actuadorDef: ALARM ID				{strcpy(id.nombre, $2);
 						 insertar(tabla, id, n_lineas);
 						}
 						 else
-						  errorSemantico();}
+						  errorSemanticoDefinido();}
 	| MSG ID				{strcpy(id.nombre, $2);
 						id.tipo = 22;
 						insertar (tabla, id, n_lineas);}
@@ -318,7 +323,7 @@ actuadorInstr: ID ON 				{if(buscar(tabla, $1, id))
 						  }
 						 }
 						 else
-						  errorSemantico();}
+						  errorSemanticoDefinido();}
 	| ID OFF				{if(buscar(tabla, $1, id)){
 						 if(execute){
 						  if(id.tipo == 21)
@@ -326,12 +331,12 @@ actuadorInstr: ID ON 				{if(buscar(tabla, $1, id))
 						  }
 						 }
 						 else
-						  errorSemantico();}
+						  errorSemanticoDefinido();}
 	| ID ON CADENA				{if(buscar(tabla, $1, id)){
 						 if(execute)
 						  fprintf(yyout, "entornoMostrarMensaje(%s);\n",$3);}
 						 else
-						  errorSemantico();}
+						  errorSemanticoDefinido();}
 	| ID ON ID				{if(buscar(tabla, $1, id)){
 						 if(execute){
 						  buscar(tabla, $3, id);
@@ -339,7 +344,7 @@ actuadorInstr: ID ON 				{if(buscar(tabla, $1, id))
 						  }
 						 }
 						 else
-						  errorSemantico();}
+						  errorSemanticoDefinido();}
 	;
 
 expr:    NUMERO	 		{$$=$1;}
@@ -350,6 +355,10 @@ expr:    NUMERO	 		{$$=$1;}
 				   $$ = id.valor.valor_entero; 	
 				  else if(id.tipo == 1)
 				   $$ = id.valor.valor_real;
+				  else if(id.tipo == 2)
+				   errorSemanticoOperacionInvalida();
+				  else if(id.tipo == 3)
+ 				   errorSemanticoOperacionInvalida();
 				  else if(id.tipo == 10)
 				   $$ = id.valor.valor_real;
 				  else if(id.tipo == 11)
@@ -358,7 +367,7 @@ expr:    NUMERO	 		{$$=$1;}
 				   $$ = id.valor.valor_real;
 				 }
 				 else
-				  errorSemantico();}
+				  errorSemanticoDefinido();}
         | expr '+' expr 	{$$=$1+$3;}       	       
         | expr '-' expr    	{$$=$1-$3;}             
         | expr '*' expr         {$$=$1*$3;}

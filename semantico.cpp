@@ -48,10 +48,9 @@ void insertar (tipo_tabla &TS, tipo_datoTS identificador, int n_lineas)
     TS.tabla[pos].valor.valor_real = identificador.valor.valor_real;
   }
   else
-   cout<<"Error semántico de tipo de variable línea "<<n_lineas<<endl;
+   cout << "Error semántico en la línea "<< n_lineas <<" por cambiar el tipo de una variable ya definida"<<endl;	
  }
 }
-
 
 
 
