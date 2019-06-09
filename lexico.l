@@ -1,5 +1,5 @@
 %{
-#include "expresiones.h"
+#include "DSPL.h"
 #include <math.h>
 int n_lineas;
 %}
