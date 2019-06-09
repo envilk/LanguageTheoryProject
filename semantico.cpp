@@ -130,15 +130,17 @@ void mostrar(tipo_tabla TS)
 
 
 
-void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool end, tipo_tabla &TS, int n_lineas)
+void insertarVariables(tipo_variables &vars, tipo_cadena cadena)
 {
- if(!end)
- {
   strcpy(vars.variables[vars.max], cadena);
   vars.max++;
- }
- else
- {
+}
+
+
+
+
+void insertarVariablesFinal(tipo_variables &vars, int tipo, tipo_tabla &TS, int n_lineas)
+{
   tipo_datoTS id;
   for(int i=0;i<vars.max;i++)
   { 
@@ -147,5 +149,4 @@ void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool 
    insertar(TS, id, n_lineas);
   }
   vars.max = 0;
- }
 }

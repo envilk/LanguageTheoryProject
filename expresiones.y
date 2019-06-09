@@ -136,7 +136,7 @@ bucle: REPEAT expr {if(!floatNumber){
 		       errorSemanticoTipoReal();} 
 		      '[' accion 
 		      {if(!floatNumber)
-			fprintf(yyout, "}\n");}
+			fprintf(yyout, "}\n"); nBucles=0;}
 		       CIERRE 	
  	;
 
@@ -178,12 +178,12 @@ time: PAUSE expr		{if(execute){
 	| START 		{iniciar();}
 	;
 		
-variable: INT ID		{insertarVariables(variables, $2, 0, false, tabla, n_lineas); tipo=0;}
-	| FLOAT ID		{insertarVariables(variables, $2, 1, false, tabla, n_lineas); tipo=1;}
-	| STRING ID		{insertarVariables(variables, $2, 2, false, tabla, n_lineas); tipo=2;}
-	| POS ID		{insertarVariables(variables, $2, 3, false, tabla, n_lineas); tipo=3;}
-	| variable ',' ID	{insertarVariables(variables, $3, tipo, false, tabla, n_lineas);}
-	| ';'			{insertarVariables(variables, "", tipo, true, tabla, n_lineas);}
+variable: INT ID		{insertarVariables(variables, $2); tipo=0;}
+	| FLOAT ID		{insertarVariables(variables, $2); tipo=1;}
+	| STRING ID		{insertarVariables(variables, $2); tipo=2;}
+	| POS ID		{insertarVariables(variables, $2); tipo=3;}
+	| variable ',' ID	{insertarVariables(variables, $3);}
+	| ';'			{insertarVariablesFinal(variables, tipo, tabla, n_lineas);}
 	;
 
 asignacion: ID '=' expr		{if(buscar(tabla, $1, id))

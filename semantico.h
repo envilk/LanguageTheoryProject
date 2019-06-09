@@ -32,7 +32,9 @@ void insertar (tipo_tabla &TS, tipo_datoTS identificador, int n_lineas);
 
 bool buscar (tipo_tabla TS, tipo_cadena nombre, tipo_datoTS &identificador);
 
-void insertarVariables(tipo_variables &vars, tipo_cadena cadena, int tipo, bool end, tipo_tabla &TS, int n_lineas);
+void insertarVariables(tipo_variables &vars, tipo_cadena cadena);
+
+void insertarVariablesFinal(tipo_variables &vars, int tipo, tipo_tabla &TS, int n_lineas);
 
 void mostrar(tipo_tabla TS);
 
